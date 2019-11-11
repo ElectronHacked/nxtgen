@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
 
-export default class Init extends Command {
+export default class ApiCommand extends Command {
   static description = 'adds an API to the project';
 
   static flags = {
@@ -16,7 +16,7 @@ export default class Init extends Command {
   static args = [{ name: 'file' }];
 
   async run() {
-    const { args, flags } = this.parse(Init);
+    const { args, flags } = this.parse(ApiCommand);
 
     const name = flags.name || 'world';
     this.log(`hello ${name} from .\\src\\commands\\hello.ts`);

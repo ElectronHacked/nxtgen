@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
 
-export default class Init extends Command {
+export default class SwagCommand extends Command {
   static description = 'adds/updates a swagger file and regenerates the APIs';
 
   static flags = {
@@ -22,6 +22,6 @@ export default class Init extends Command {
   static args = [{ name: 'file' }];
 
   async run() {
-    const { args, flags } = this.parse(Init);
+    const { args, flags } = this.parse(SwagCommand);
   }
 }

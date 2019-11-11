@@ -1,28 +1,31 @@
 import { Command, flags } from '@oclif/command';
+import camelcase from 'camelcase';
+import chalk = require('chalk');
 
-export default class Init extends Command {
+const CONTEXT_SUFFIX = 'Context';
+
+export default class ContextCommand extends Command {
   static description = 'adds a new context';
 
   static flags = {
     help: flags.help({ char: 'h' }),
-
-    // flag with a value (-n, --name=VALUE)
-    name: flags.string({ char: 'n', description: 'name of the project' }),
-
-    // flag with no value (-f, --force)
-    force: flags.boolean({ char: 'f' }),
   };
 
-  static args = [{ name: 'file' }];
+  static args = [
+    {
+      name: 'name',
+      description: 'name of the context',
+      required: true,
+      parse: (input: string) =>
+        input.endsWith(CONTEXT_SUFFIX)
+          ? camelcase(input, { pascalCase: true })
+          : `${camelcase(input, { pascalCase: true })}${CONTEXT_SUFFIX}`,
+    },
+  ];
 
   async run() {
-    const { args, flags } = this.parse(Init);
+    const { args } = this.parse(ContextCommand);
 
-    const name = flags.name || 'world';
-    this.log(`hello ${name} from .\\src\\commands\\hello.ts`);
-
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`);
-    }
+    this.log(`The name of the context is: ${chalk.green(args.name)}`);
   }
 }

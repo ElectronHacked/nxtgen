@@ -1,28 +1,29 @@
 import { Command, flags } from '@oclif/command';
+import camelcase from 'camelcase';
+import chalk = require('chalk');
 
-export default class Init extends Command {
+const hookPrefix = 'use';
+
+export default class HookCommand extends Command {
   static description = 'adds a new hook';
 
   static flags = {
     help: flags.help({ char: 'h' }),
-
-    // flag with a value (-n, --name=VALUE)
-    name: flags.string({ char: 'n', description: 'name of the project' }),
-
-    // flag with no value (-f, --force)
-    force: flags.boolean({ char: 'f' }),
   };
 
-  static args = [{ name: 'file' }];
+  static args = [
+    {
+      name: 'name',
+      description: 'name of the hook',
+      required: true,
+      parse: (input: string) =>
+        input.startsWith(hookPrefix) ? input : `${hookPrefix}${camelcase(input, { pascalCase: true })}`,
+    },
+  ];
 
   async run() {
-    const { args, flags } = this.parse(Init);
+    const { args } = this.parse(HookCommand);
 
-    const name = flags.name || 'world';
-    this.log(`hello ${name} from .\\src\\commands\\hello.ts`);
-
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`);
-    }
+    this.log(`The name of the hook is: ${chalk.green(args.name)}`);
   }
 }

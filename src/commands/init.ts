@@ -1,7 +1,7 @@
 import { Command, flags } from '@oclif/command';
 import chalk = require('chalk');
 
-export default class Init extends Command {
+export default class InitCommand extends Command {
   static description = 'generates a new project';
 
   static flags = {
@@ -20,11 +20,10 @@ export default class Init extends Command {
   static args = [{ name: 'name', required: true, description: 'name of the project' }];
 
   async run() {
-    const { args, flags } = this.parse(Init);
+    const { args, flags } = this.parse(InitCommand);
+
     if (args.name) {
-      this.log(`The name of the project is: ${args.name}`);
-    } else {
-      this.error(`Please make sure that you provide the ${chalk.red.bold('name')} of the project`);
+      this.log(`The name of the project is: ${chalk.blue(args.name)}`);
     }
 
     const { authentication, googleAnalytics, insights } = flags;

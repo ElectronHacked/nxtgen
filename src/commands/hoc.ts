@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
 
-export default class Init extends Command {
+export default class HocCommand extends Command {
   static description = 'adds a new Higher-Order Component';
 
   static flags = {
@@ -16,7 +16,7 @@ export default class Init extends Command {
   static args = [{ name: 'file' }];
 
   async run() {
-    const { args, flags } = this.parse(Init);
+    const { args, flags } = this.parse(HocCommand);
 
     const name = flags.name || 'world';
     this.log(`hello ${name} from .\\src\\commands\\hello.ts`);
