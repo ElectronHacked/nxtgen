@@ -1,5 +1,6 @@
 import { Command, flags } from '@oclif/command';
 import chalk = require('chalk');
+import inquirer = require('inquirer');
 
 export default class InitCommand extends Command {
   static description = 'generates a new project';
@@ -21,6 +22,18 @@ export default class InitCommand extends Command {
 
   async run() {
     const { args, flags } = this.parse(InitCommand);
+
+    const responses = await inquirer.prompt([
+      {
+        name: 'style',
+        type: 'list',
+        message: 'Please select the type of styling',
+        choices: [{ name: 'Styled Components' }, { name: 'SCSS' }],
+        default: 'styledComponents',
+      },
+    ]);
+
+    this.log(`I would like to use ${chalk.green(responses.style)}`);
 
     if (args.name) {
       this.log(`The name of the project is: ${chalk.blue(args.name)}`);
