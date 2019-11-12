@@ -18,11 +18,11 @@ A CLI tool for generating NextJs applications
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g nxtgen
+$ npm install -g @phillemonm/nxtgen
 $ nxtgen COMMAND
 running command...
 $ nxtgen (-v|--version|version)
-nxtgen/1.0.0 win32-x64 node-v10.16.3
+@phillemonm/nxtgen/1.0.0 win32-x64 node-v10.16.3
 $ nxtgen --help [COMMAND]
 USAGE
   $ nxtgen COMMAND
