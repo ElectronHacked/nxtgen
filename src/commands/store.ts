@@ -1,28 +1,26 @@
 import { Command, flags } from '@oclif/command';
+import chalk = require('chalk');
+import camelcase from 'camelcase';
 
 export default class StoreCommand extends Command {
-  static description = 'adds a new project';
+  static description = 'adds a new redux store to the project';
 
   static flags = {
     help: flags.help({ char: 'h' }),
-
-    // flag with a value (-n, --name=VALUE)
-    name: flags.string({ char: 'n', description: 'name of the project' }),
-
-    // flag with no value (-f, --force)
-    force: flags.boolean({ char: 'f' }),
   };
 
-  static args = [{ name: 'file' }];
+  static args = [
+    {
+      name: 'name',
+      description: 'name of the store',
+      required: true,
+      parse: (input: string) => camelcase(input, { pascalCase: true }),
+    },
+  ];
 
   async run() {
-    const { args, flags } = this.parse(StoreCommand);
+    const { args } = this.parse(StoreCommand);
 
-    const name = flags.name || 'world';
-    this.log(`hello ${name} from .\\src\\commands\\hello.ts`);
-
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`);
-    }
+    this.log(`The name of the store is: ${chalk.green(args.name)}`);
   }
 }

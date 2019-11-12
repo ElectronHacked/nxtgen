@@ -1,8 +1,8 @@
 import { Command, flags } from '@oclif/command';
-import camelcase from 'camelcase';
 import chalk = require('chalk');
+import { ensureItStartsWith } from '../utils';
 
-const hookPrefix = 'use';
+const HOOK_PREFIX = 'use';
 
 export default class HookCommand extends Command {
   static description = 'adds a new hook';
@@ -16,8 +16,7 @@ export default class HookCommand extends Command {
       name: 'name',
       description: 'name of the hook',
       required: true,
-      parse: (input: string) =>
-        input.startsWith(hookPrefix) ? input : `${hookPrefix}${camelcase(input, { pascalCase: true })}`,
+      parse: (input: string) => ensureItStartsWith(input, HOOK_PREFIX),
     },
   ];
 

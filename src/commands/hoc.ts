@@ -1,28 +1,28 @@
 import { Command, flags } from '@oclif/command';
+import { ensureItStartsWith } from '../utils';
+import chalk = require('chalk');
+
+const HOC_PREFIX = 'with';
 
 export default class HocCommand extends Command {
   static description = 'adds a new Higher-Order Component';
 
   static flags = {
     help: flags.help({ char: 'h' }),
-
-    // flag with a value (-n, --name=VALUE)
-    name: flags.string({ char: 'n', description: 'name of the project' }),
-
-    // flag with no value (-f, --force)
-    force: flags.boolean({ char: 'f' }),
   };
 
-  static args = [{ name: 'file' }];
+  static args = [
+    {
+      name: 'name',
+      description: 'name of the higher-order component',
+      required: true,
+      parse: (input: string) => ensureItStartsWith(input, HOC_PREFIX),
+    },
+  ];
 
   async run() {
-    const { args, flags } = this.parse(HocCommand);
+    const { args } = this.parse(HocCommand);
 
-    const name = flags.name || 'world';
-    this.log(`hello ${name} from .\\src\\commands\\hello.ts`);
-
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`);
-    }
+    this.log(`The name of the hoc is: ${chalk.green(args.name)}`);
   }
 }

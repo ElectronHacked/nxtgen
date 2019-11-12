@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
-import camelcase from 'camelcase';
 import chalk = require('chalk');
+import { ensureItEndsWith } from '../utils';
 
 const CONTEXT_SUFFIX = 'Context';
 
@@ -16,10 +16,7 @@ export default class ContextCommand extends Command {
       name: 'name',
       description: 'name of the context',
       required: true,
-      parse: (input: string) =>
-        input.endsWith(CONTEXT_SUFFIX)
-          ? camelcase(input, { pascalCase: true })
-          : `${camelcase(input, { pascalCase: true })}${CONTEXT_SUFFIX}`,
+      parse: (input: string) => ensureItEndsWith(input, CONTEXT_SUFFIX),
     },
   ];
 
