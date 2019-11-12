@@ -1,4 +1,7 @@
 import { Command, flags } from '@oclif/command';
+import Listr = require('listr');
+import { makeGetRequest } from './../utils/http';
+import chalk = require('chalk');
 
 export default class SwagCommand extends Command {
   static description = 'adds/updates a swagger file and regenerates the APIs';
@@ -6,22 +9,33 @@ export default class SwagCommand extends Command {
   static flags = {
     help: flags.help({ char: 'h' }),
 
-    // flag with a value (-n, --name=VALUE)
-    name: flags.string({ char: 'n', description: 'name of the project' }),
+    // flag with a value (-u, --username=VALUE)
+    username: flags.string({ char: 'u', description: 'username of the server that hosts the swagger file' }),
 
-    // flag with no value (-a, --authentication)
-    authentication: flags.boolean({ char: 'a', description: 'include authentication' }),
-
-    // flag with no value (-g, --googleAnalytics)
-    googleAnalytics: flags.boolean({ char: 'g', description: 'include Google Analytics' }),
-
-    // flag with no value (-a, --)
-    insights: flags.boolean({ char: 'i', description: 'include Application Insights' }),
+    // flag with a value (-u, --username=VALUE)
+    password: flags.string({ char: 'p', description: 'password of the server that hosts the swagger file' }),
   };
 
-  static args = [{ name: 'file' }];
+  static args = [{ name: 'name', required: true, description: 'name of the destination file' }];
 
   async run() {
-    const { args, flags } = this.parse(SwagCommand);
+    const { flags, args } = this.parse(SwagCommand);
+
+    const { username, password } = flags;
+
+    const task = new Listr([
+      {
+        title: 'Fetch image',
+        task: () => makeGetRequest('https://dog.ceo/api/breeds/image/random'),
+      },
+    ]);
+
+    task.run().catch(error => this.error(error));
+
+    this.log(`The username is ${chalk.green(username)}`);
+
+    this.log(`The password is ${chalk.green(password)}`);
+
+    this.log(`The file name is ${chalk.green(args.name)}`);
   }
 }
