@@ -5,7 +5,7 @@
   },
   "linterOptions": {
     "exclude": [
-      "./src/templates/**/**"
+      "src/templates"
     ]
   }
 }

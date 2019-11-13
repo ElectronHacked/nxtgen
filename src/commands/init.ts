@@ -1,6 +1,8 @@
 import { Command, flags } from '@oclif/command';
 import chalk = require('chalk');
 import inquirer = require('inquirer');
+import decamelize = require('decamelize');
+import { PREPROCESSOR, WEB_TRACKING } from '../config';
 
 export default class InitCommand extends Command {
   static description = 'generates a new project';
@@ -14,32 +16,85 @@ export default class InitCommand extends Command {
     // flag with no value (-g, --googleAnalytics)
     googleAnalytics: flags.boolean({ char: 'g', description: 'include Google Analytics' }),
 
-    // flag with no value (-a, --)
+    // flag with no value (-a, --insights)
     insights: flags.boolean({ char: 'i', description: 'include Application Insights' }),
+
+    // flag with no value (-f, --force)
+    force: flags.boolean({
+      char: 'f',
+      description:
+        'does not ask the user to confirm if they do not want any of authentication, googleAnalytics or insights',
+    }),
   };
 
-  static args = [{ name: 'name', required: true, description: 'name of the project' }];
+  static args = [
+    {
+      name: 'name',
+      description: 'name of the project',
+      parse: (input: string) => (input ? decamelize(input, '-') : input),
+    },
+  ];
 
   async run() {
     const { args, flags } = this.parse(InitCommand);
+    let { authentication, googleAnalytics, insights, force } = flags;
+
+    let applicationName: string = args.name;
+
+    const hasNotProvidedAnyBooleanFlag = !authentication && !googleAnalytics && !insights && !force;
 
     const responses = await inquirer.prompt([
+      {
+        name: 'applicationName',
+        type: 'input',
+        message: 'Please enter the name of the project',
+        validate: (value: string) => {
+          this.log(`value: ${value}`);
+
+          if (!value) {
+            return 'Please enter the name of the project';
+          }
+
+          return true;
+        },
+        when: !args.name,
+      },
       {
         name: 'style',
         type: 'list',
         message: 'Please select the type of styling',
-        choices: [{ name: 'Styled Components' }, { name: 'SCSS' }],
+        choices: Object.values(PREPROCESSOR),
         default: 'styledComponents',
+      },
+      {
+        name: 'authentication',
+        type: 'confirm',
+        message: 'Do you want to include authentication?',
+        when: hasNotProvidedAnyBooleanFlag,
+        default: true
+      },
+      {
+        name: 'tracking',
+        type: 'checkbox',
+        message: 'Select any tracking mechanism',
+        choices: Object.values(WEB_TRACKING),
+        when: hasNotProvidedAnyBooleanFlag,
       },
     ]);
 
-    this.log(`I would like to use ${chalk.green(responses.style)}`);
-
-    if (args.name) {
-      this.log(`The name of the project is: ${chalk.blue(args.name)}`);
+    if (!applicationName) {
+      applicationName = responses.applicationName;
     }
 
-    const { authentication, googleAnalytics, insights } = flags;
+    if (hasNotProvidedAnyBooleanFlag) {
+      authentication = responses.authentication;
+      googleAnalytics = responses.tracking.includes(WEB_TRACKING.ga);
+      insights = responses.tracking.includes(WEB_TRACKING.ai);
+    }
+
+    this.log(`I would like to use ${chalk.green(responses.style)}`);
+
+    this.log(`The name of the project is: ${chalk.blue(applicationName)}`);
 
     this.log(`${authentication ? chalk.green.bold('Has') : chalk.red('Does not have')} authentication`);
 
