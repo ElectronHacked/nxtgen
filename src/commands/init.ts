@@ -31,7 +31,7 @@ export default class InitCommand extends Command {
     {
       name: 'name',
       description: 'name of the project',
-      parse: (input: string) => (input ? decamelize(input, '-') : input),
+      parse: (input: string) => (input ? decamelize(input.split(' ').join('-'), '-') : input),
     },
   ];
 
@@ -58,6 +58,7 @@ export default class InitCommand extends Command {
           return true;
         },
         when: !args.name,
+        filter: (input: string) => (input ? decamelize(input.split(' ').join('-'), '-') : input),
       },
       {
         name: 'style',
@@ -83,7 +84,7 @@ export default class InitCommand extends Command {
     ]);
 
     if (!applicationName) {
-      applicationName = responses.applicationName;
+      applicationName = decamelize(responses.applicationName.split(' ').join('-'), '-');
     }
 
     if (hasNotProvidedAnyBooleanFlag) {
