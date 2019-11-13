@@ -1,0 +1,1 @@
+export const GOING_TO_ROUTE = 'GOING_TO_ROUTE';

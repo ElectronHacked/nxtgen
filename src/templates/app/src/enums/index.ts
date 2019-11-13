@@ -1,0 +1,1 @@
+export { GaEventCategory } from './gaEventCategory';
