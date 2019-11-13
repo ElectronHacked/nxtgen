@@ -3,6 +3,8 @@ import chalk = require('chalk');
 import inquirer = require('inquirer');
 import decamelize = require('decamelize');
 import { PREPROCESSOR, WEB_TRACKING } from '../config';
+const path = require('path');
+import cpy from 'cpy';
 
 export default class InitCommand extends Command {
   static description = 'generates a new project';
@@ -72,7 +74,7 @@ export default class InitCommand extends Command {
         type: 'confirm',
         message: 'Do you want to include authentication?',
         when: hasNotProvidedAnyBooleanFlag,
-        default: true
+        default: true,
       },
       {
         name: 'tracking',
@@ -82,6 +84,12 @@ export default class InitCommand extends Command {
         when: hasNotProvidedAnyBooleanFlag,
       },
     ]);
+
+    cpy(path.resolve(__dirname, 'templates/app/**'), path.join(__dirname))
+      .then(() => {
+        this.log('Files copied successfully!');
+      })
+      .catch(error => this.log('Oops! Failed to copy the files', error));
 
     if (!applicationName) {
       applicationName = decamelize(responses.applicationName.split(' ').join('-'), '-');

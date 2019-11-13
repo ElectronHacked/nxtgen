@@ -39,7 +39,7 @@ USAGE
 * [`nxtgen help [COMMAND]`](#nxtgen-help-command)
 * [`nxtgen hoc NAME`](#nxtgen-hoc-name)
 * [`nxtgen hook NAME`](#nxtgen-hook-name)
-* [`nxtgen init NAME`](#nxtgen-init-name)
+* [`nxtgen init [NAME]`](#nxtgen-init-name)
 * [`nxtgen page [FILE]`](#nxtgen-page-file)
 * [`nxtgen store NAME`](#nxtgen-store-name)
 * [`nxtgen swag NAME`](#nxtgen-swag-name)
@@ -177,21 +177,27 @@ OPTIONS
 
 _See code: [src\commands\hook.ts](https://github.com/ElectronHacked/nxtgen/blob/v1.0.0/src\commands\hook.ts)_
 
-## `nxtgen init NAME`
+## `nxtgen init [NAME]`
 
 generates a new project
 
 ```
 USAGE
-  $ nxtgen init NAME
+  $ nxtgen init [NAME]
 
 ARGUMENTS
   NAME  name of the project
 
 OPTIONS
   -a, --authentication   include authentication
+
+  -f, --force            does not ask the user to confirm if they do not want any of authentication, googleAnalytics or
+                         insights
+
   -g, --googleAnalytics  include Google Analytics
+
   -h, --help             show CLI help
+
   -i, --insights         include Application Insights
 ```
 
