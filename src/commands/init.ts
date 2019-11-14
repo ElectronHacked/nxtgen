@@ -52,8 +52,6 @@ export default class InitCommand extends BaseCommand {
         type: 'input',
         message: 'Please enter the name of the project',
         validate: (value: string) => {
-          this.log(`value: ${value}`);
-
           if (!value) {
             return 'Please enter the name of the project';
           }
@@ -85,6 +83,14 @@ export default class InitCommand extends BaseCommand {
         when: hasNotProvidedAnyBooleanFlag,
       },
     ]);
+
+    // copy all files starting with .{whaetever} (like .eslintrc)
+    // @ts-ignore
+    this.fs.copy(this.templatePath('app/.*'), this.destinationPath('./'));
+
+    // copy all folders and their contents
+    // @ts-ignore
+    this.fs.copy(this.templatePath('app'), this.destinationPath('./'));
 
     cpy(path.resolve(__dirname, '../templates/app/**'), path.resolve(__dirname, '../application/'))
       .then(() => {

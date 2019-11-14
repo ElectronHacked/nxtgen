@@ -9,20 +9,20 @@ import { Storage } from '../utils';
 const readPkgUp = require('read-pkg-up');
 
 abstract class BaseCommand extends Command {
+  readonly fs: FileEditor.Editor;
   private _destinationRoot: string;
   private _sourceRoot: string;
-  private store: Storage;
-  private readonly fs: FileEditor.Editor;
+  store: Storage;
 
   constructor(argv: string[], config: IConfig) {
     super(argv, config);
 
     this._destinationRoot = '';
     this._sourceRoot = '';
-    this.store = this._getStorage();
-
+    
     const sharedFs = memFs.create();
     this.fs = FileEditor.create(sharedFs);
+    this.store = this._getStorage();
   }
 
   /**
@@ -88,8 +88,8 @@ abstract class BaseCommand extends Command {
    * @param  {...String} path
    * @return {String}    joined path
    */
-  templatePath() {
-    let filepath = path.join.apply(path, arguments as any);
+  templatePath(targetPath: string) {
+    let filepath = path.resolve(__dirname, `../templates/${targetPath}`)
 
     if (!path.isAbsolute(filepath)) {
       filepath = path.join(this.sourceRoot(), filepath);
@@ -103,8 +103,8 @@ abstract class BaseCommand extends Command {
    * @param  {...String} path
    * @return {String}    joined path
    */
-  destinationPath() {
-    let filepath = path.join.apply(path, arguments as any);
+  destinationPath(...args: string[]) {
+    let filepath = path.join.apply(path, ['../templates/', ...args]);
 
     if (!path.isAbsolute(filepath)) {
       filepath = path.join(this.destinationRoot(), filepath);
