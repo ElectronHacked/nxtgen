@@ -1,12 +1,13 @@
-import { Command, flags } from '@oclif/command';
+import { flags } from '@oclif/command';
 import chalk = require('chalk');
 import inquirer = require('inquirer');
 import decamelize = require('decamelize');
 import { PREPROCESSOR, WEB_TRACKING } from '../config';
 const path = require('path');
 import cpy from 'cpy';
+import BaseCommand from '../base';
 
-export default class InitCommand extends Command {
+export default class InitCommand extends BaseCommand {
   static description = 'generates a new project';
 
   static flags = {
@@ -85,11 +86,14 @@ export default class InitCommand extends Command {
       },
     ]);
 
-    cpy(path.resolve(__dirname, 'templates/app/**'), path.join(__dirname))
+    cpy(path.resolve(__dirname, '../templates/app/**'), path.resolve(__dirname, '../application/'))
       .then(() => {
         this.log('Files copied successfully!');
       })
       .catch(error => this.log('Oops! Failed to copy the files', error));
+
+    this.log(`Template path: ${path.resolve(__dirname, 'templates/app/**')}`);
+    this.log(`path.join(__dirname): ${path.join(__dirname)}`);
 
     if (!applicationName) {
       applicationName = decamelize(responses.applicationName.split(' ').join('-'), '-');
