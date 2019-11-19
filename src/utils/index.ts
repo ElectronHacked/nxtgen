@@ -4,4 +4,3 @@ export { makePutRequest } from './http';
 export { makeDeleteRequest } from './http';
 export { ensureItStartsWith } from './stringHelpers';
 export { ensureItEndsWith } from './stringHelpers';
-export { Storage } from './storage';

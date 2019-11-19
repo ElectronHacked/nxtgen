@@ -1,48 +1,37 @@
-import { Command, flags } from '@oclif/command';
+import { Command } from '@oclif/command';
 import { IConfig } from '@oclif/config';
 import makeDir = require('make-dir');
-import fs = require('fs');
 import path = require('path');
+import fs = require('fs');
 import memFs = require('mem-fs');
 import FileEditor = require('mem-fs-editor');
-import { Storage } from '../utils';
-const readPkgUp = require('read-pkg-up');
+import Conf = require('conf');
+const copyTemplateDir = require('copy-template-dir');
+
+type CopyCallback = (err: Error, createdFiles: string[]) => void;
 
 abstract class BaseCommand extends Command {
+  public store: Conf<any>;
+  public copy: (templateDir: string, targetDir: string, vars: { [key: string]: string }, cb: CopyCallback) => void;
   readonly fs: FileEditor.Editor;
   private _destinationRoot: string;
   private _sourceRoot: string;
-  store: Storage;
 
   constructor(argv: string[], config: IConfig) {
     super(argv, config);
 
     this._destinationRoot = '';
     this._sourceRoot = '';
-    
+    this.copy = copyTemplateDir;
+
+    this.store = new Conf({
+      configName: 'nxtgen-conf',
+      clearInvalidConfig: false, // The user might want to edit the config and when that happens, we do not want the user to lose all data. Rather throw an exception
+      cwd: this.destinationPath('./'), // I want the config file to be stored within the root directory of the project
+    });
+
     const sharedFs = memFs.create();
     this.fs = FileEditor.create(sharedFs);
-    this.store = this._getStorage();
-  }
-
-  /**
-   * Determine the root generator name (the one who's extending Generator).
-   * @return {String} The name of the root generator
-   */
-  rootGeneratorName() {
-    const pkg = readPkgUp.sync().pkg;
-    return pkg ? pkg.name : '*';
-  }
-
-  /**
-   * Return a storage instance.
-   * @param  {String} rootName  The rootName in which is stored inside .yo-rc.json
-   * @return {Storage} Generator storage
-   * @private
-   */
-  _getStorage(rootName = this.rootGeneratorName()) {
-    const storePath = path.join(this.destinationRoot(), '.nxtgen.json');
-    return new Storage(rootName, this.fs, storePath);
   }
 
   /**
@@ -63,7 +52,7 @@ abstract class BaseCommand extends Command {
       process.chdir(rootPath);
 
       // Reset the storage
-      this.store = this._getStorage();
+      this.store.clear();
     }
 
     return this._destinationRoot || process.cwd();
@@ -89,7 +78,7 @@ abstract class BaseCommand extends Command {
    * @return {String}    joined path
    */
   templatePath(targetPath: string) {
-    let filepath = path.resolve(__dirname, `../templates/${targetPath}`)
+    let filepath = path.resolve(__dirname, `../templates/${targetPath}`);
 
     if (!path.isAbsolute(filepath)) {
       filepath = path.join(this.sourceRoot(), filepath);
@@ -104,7 +93,7 @@ abstract class BaseCommand extends Command {
    * @return {String}    joined path
    */
   destinationPath(...args: string[]) {
-    let filepath = path.join.apply(path, ['../templates/', ...args]);
+    let filepath = path.join.apply(path, args);
 
     if (!path.isAbsolute(filepath)) {
       filepath = path.join(this.destinationRoot(), filepath);

@@ -1,10 +1,9 @@
 import { flags } from '@oclif/command';
 import chalk = require('chalk');
 import inquirer = require('inquirer');
+const mkdirp = require('mkdirp');
 import decamelize = require('decamelize');
 import { PREPROCESSOR, WEB_TRACKING } from '../config';
-const path = require('path');
-import cpy from 'cpy';
 import BaseCommand from '../base';
 
 export default class InitCommand extends BaseCommand {
@@ -84,41 +83,28 @@ export default class InitCommand extends BaseCommand {
       },
     ]);
 
-    // copy all files starting with .{whaetever} (like .eslintrc)
-    // @ts-ignore
-    this.fs.copy(this.templatePath('app/.*'), this.destinationPath('./'));
-
-    // copy all folders and their contents
-    // @ts-ignore
-    this.fs.copy(this.templatePath('app'), this.destinationPath('./'));
-
-    cpy(path.resolve(__dirname, '../templates/app/**'), path.resolve(__dirname, '../application/'))
-      .then(() => {
-        this.log('Files copied successfully!');
-      })
-      .catch(error => this.log('Oops! Failed to copy the files', error));
-
-    this.log(`Template path: ${path.resolve(__dirname, 'templates/app/**')}`);
-    this.log(`path.join(__dirname): ${path.join(__dirname)}`);
-
     if (!applicationName) {
       applicationName = decamelize(responses.applicationName.split(' ').join('-'), '-');
     }
+
+    // create folder project
+    mkdirp(applicationName);
+
+    // change project root to the new folder
+    this.destinationRoot(this.destinationPath(applicationName));
+
+    this.copy(this.templatePath('app'), this.destinationPath('./'), {}, (err, createdFiles) => {
+      if (err) throw err;
+      createdFiles.forEach((filePath: string) => this.log(`${chalk.green('Created')} ${filePath}`));
+    });
+
+    // Store app name
+    this.store.set('name', applicationName);
 
     if (hasNotProvidedAnyBooleanFlag) {
       authentication = responses.authentication;
       googleAnalytics = responses.tracking.includes(WEB_TRACKING.ga);
       insights = responses.tracking.includes(WEB_TRACKING.ai);
     }
-
-    this.log(`I would like to use ${chalk.green(responses.style)}`);
-
-    this.log(`The name of the project is: ${chalk.blue(applicationName)}`);
-
-    this.log(`${authentication ? chalk.green.bold('Has') : chalk.red('Does not have')} authentication`);
-
-    this.log(`${googleAnalytics ? chalk.green.bold('Includes') : chalk.red('Does not include')} Google Analytics`);
-
-    this.log(`${insights ? chalk.green.bold('Includes') : chalk.red('Does not include')} Application Insights`);
   }
 }
