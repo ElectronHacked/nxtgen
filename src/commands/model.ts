@@ -1,9 +1,10 @@
 import { flags } from '@oclif/command';
-import { ensureItStartsWith, listIncludes } from '../utils';
+import { listIncludes } from '../utils';
 import BaseCommand from '../base';
 import { ConfigKeys } from '../enums';
+import { pascalCase, camelCase } from './../utils/stringHelpers';
 
-const HOC_PREFIX = 'with';
+const ensureTheNameConforms = (input: string) => `I${pascalCase(input)}`
 
 export default class HocCommand extends BaseCommand {
   static description = 'adds a new model/interface';
@@ -15,56 +16,59 @@ export default class HocCommand extends BaseCommand {
   static args = [
     {
       name: 'name',
-      description: 'name of the higher-order component',
-      parse: (input: string) => ensureItStartsWith(input, HOC_PREFIX, false),
+      description: 'name of the interface/model',
     },
   ];
 
   async run() {
     const { args } = this.parse(HocCommand);
 
-    let { name: hocName } = args;
+    let { name: modelName } = args;
 
-    const availableHocs: string[] = this.store.get(ConfigKeys.Hocs);
+    const availableModels: string[] = this.store.get(ConfigKeys.Models);
+
+    const PROMPT_MSG = 'Please enter name of the interface/model';
 
     const responses = await this.inquirer.prompt([
       {
-        name: 'responses',
+        name: 'model',
         type: 'input',
-        message: 'Please enter name of the HOC',
+        message: PROMPT_MSG,
         validate: (value: string) => {
           if (!value) {
-            return 'Please enter name of the HOC';
+            return PROMPT_MSG;
           }
 
-          const hoc = ensureItStartsWith(value, HOC_PREFIX, false);
+          const hoc = ensureTheNameConforms(value);
 
-          if (listIncludes(availableHocs, hoc)) {
+          if (listIncludes(availableModels, hoc)) {
             return `${value} already exists. Please enter the name that does not exist`;
           }
 
           return true;
         },
-        when: !args.name || listIncludes(availableHocs, args.name),
-        filter: (input: string) => ensureItStartsWith(input, HOC_PREFIX, false),
+        when: !args.name || listIncludes(availableModels, args.name),
       },
     ]);
 
-    hocName = responses.responses || hocName;
+    modelName = responses.model || modelName;
 
-    this.fs.copyTpl(this.templatePath('hoc/_index.js'), this.destinationPath(`src/hocs/${hocName}.tsx`), { hocName });
+    const interfaceName = ensureTheNameConforms(modelName);
+    const fileName = camelCase(modelName);
 
-    this.store.set(ConfigKeys.Hocs, [...this.store.get(ConfigKeys.Hocs), hocName]);
+    this.fs.copyTpl(this.templatePath('model/_index.js'), this.destinationPath(`src/models/${fileName}.d.ts`), { interfaceName });
 
-    const hocsPath = this.destinationPath('src/hocs/index.ts');
+    this.store.set(ConfigKeys.Models, [...this.store.get(ConfigKeys.Models), interfaceName]);
 
-    // update hocs/index.ts to add the new namespace to the list
-    this.fs.copy(hocsPath, hocsPath, {
+    const modelsPath = this.destinationPath('src/models/index.d.ts');
+
+    // update models/index.ts to add the new namespace to the list
+    this.fs.copy(modelsPath, modelsPath, {
       process(content) {
-        const regEx = new RegExp(/\/\* NEW_HOC_IMPORT \*\//, 'g');
+        const regEx = new RegExp(/\/\* NEW_INTERFACE_IMPORT \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${hocName} } from './${hocName}';\n/* NEW_HOC_IMPORT */`);
+          .replace(regEx, `export { ${interfaceName} } from './${fileName}';\n/* NEW_INTERFACE_IMPORT */`);
         return newContent;
       },
     });

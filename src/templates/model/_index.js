@@ -1,3 +1,3 @@
-export interface < %= interfaceName % > {
+export interface <%= interfaceName %> {
   readonly id: string;
 }

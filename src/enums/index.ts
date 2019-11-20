@@ -12,4 +12,5 @@ export enum ConfigKeys {
   Hocs = 'hocs',
   Contexts = 'contexts',
   Stores = 'stores',
+  Models = 'models',
 }
