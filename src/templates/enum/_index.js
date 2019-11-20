@@ -1,4 +1,4 @@
-export enum {{enumName}} {
+export enum <%= enumName %> {
   DefaultValue = 1,
 }
 

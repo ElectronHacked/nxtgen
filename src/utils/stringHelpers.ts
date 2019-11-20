@@ -21,3 +21,8 @@ export const ensureItEndsWith = (value: string, suffix: string) => {
     ? camelcase(value, { pascalCase: true })
     : `${camelcase(value, { pascalCase: true })}${suffix}`;
 };
+
+
+export const pascalCase = (input: string) => camelcase(input, { pascalCase: true });
+
+export const camelCase = (input: string) => camelcase(input);
