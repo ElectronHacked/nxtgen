@@ -4,7 +4,7 @@ import BaseCommand from '../base';
 import { ConfigKeys } from '../enums';
 
 export default class EnumCommand extends BaseCommand {
-  static description = 'adds a new Higher-Order Component';
+  static description = 'adds a new enum';
 
   static flags = {
     help: flags.help({ char: 'h' }),

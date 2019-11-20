@@ -4,7 +4,7 @@ import camelcase from 'camelcase';
 import inquirer = require('inquirer');
 
 export default class ActionCommand extends Command {
-  static description = 'adds a new redux store to the project';
+  static description = 'adds a new redux store action against a store';
 
   static flags = {
     help: flags.help({ char: 'h' }),

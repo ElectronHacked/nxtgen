@@ -6,7 +6,7 @@ import { ConfigKeys } from '../enums';
 const HOC_PREFIX = 'with';
 
 export default class HocCommand extends BaseCommand {
-  static description = 'adds a new Higher-Order Component';
+  static description = 'adds a new model/interface';
 
   static flags = {
     help: flags.help({ char: 'h' }),
