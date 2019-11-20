@@ -1,6 +1,5 @@
 import { flags } from '@oclif/command';
 import { ensureItStartsWith, listIncludes } from '../utils';
-import inquirer = require('inquirer');
 import BaseCommand from '../base';
 
 const HOC_PREFIX = 'with';
@@ -28,7 +27,7 @@ export default class HocCommand extends BaseCommand {
 
     const availableHocs: string[] = this.store.get(STORE_KEY);
 
-    const responses = await inquirer.prompt([
+    const responses = await this.inquirer.prompt([
       {
         name: 'responses',
         type: 'input',
@@ -51,7 +50,7 @@ export default class HocCommand extends BaseCommand {
       },
     ]);
 
-    hocName = hocName || responses.responses;
+    hocName = responses.responses || hocName;
 
     this.fs.copyTpl(this.templatePath('hoc/_index.js'), this.destinationPath(`src/hocs/${hocName}.tsx`), { hocName });
 

@@ -53,9 +53,11 @@ export default class ContextCommand extends BaseCommand {
       },
     ]);
 
-    contextName = contextName || responses.contextName;
+    contextName = responses.contextName || contextName;
 
-    this.fs.copyTpl(this.templatePath('context/_index.js'), this.destinationPath(`src/contexts/${contextName}.tsx`), { contextName });
+    this.fs.copyTpl(this.templatePath('context/_index.js'), this.destinationPath(`src/contexts/${contextName}.tsx`), {
+      contextName,
+    });
 
     this.store.set(STORE_KEY, [...this.store.get(STORE_KEY), contextName]);
 

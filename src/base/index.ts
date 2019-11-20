@@ -7,12 +7,14 @@ import memFs = require('mem-fs');
 import FileEditor = require('mem-fs-editor');
 import Conf = require('conf');
 import chalk = require('chalk');
+import inquirer = require('inquirer');
 const copyTemplateDir = require('copy-template-dir');
 
 type CopyCallback = (err: Error, createdFiles: string[]) => void;
 
 abstract class BaseCommand extends Command {
   public store: Conf<any>;
+  public inquirer: inquirer.Inquirer;
   public copyTemplateDir: (
     templateDir: string,
     targetDir: string,
@@ -29,6 +31,7 @@ abstract class BaseCommand extends Command {
     this._destinationRoot = '';
     this._sourceRoot = '';
     this.copyTemplateDir = copyTemplateDir;
+    this.inquirer = inquirer;
 
     this.store = new Conf({
       configName: '.ngen.conf',
