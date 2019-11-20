@@ -1,6 +1,5 @@
 import { flags } from '@oclif/command';
 import chalk = require('chalk');
-import inquirer = require('inquirer');
 const mkdirp = require('mkdirp');
 import decamelize = require('decamelize');
 import { PREPROCESSOR, WEB_TRACKING } from '../config';
@@ -45,7 +44,7 @@ export default class InitCommand extends BaseCommand {
 
     const hasNotProvidedAnyBooleanFlag = !authentication && !googleAnalytics && !insights && !force;
 
-    const responses = await inquirer.prompt([
+    const responses = await this.inquirer.prompt([
       {
         name: 'applicationName',
         type: 'input',

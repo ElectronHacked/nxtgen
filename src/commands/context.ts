@@ -1,6 +1,4 @@
 import { flags } from '@oclif/command';
-import chalk = require('chalk');
-import inquirer = require('inquirer');
 import BaseCommand from '../base';
 import { ensureItEndsWith, listIncludes } from '../utils';
 import { ConfigKeys } from '../enums';
@@ -30,7 +28,7 @@ export default class ContextCommand extends BaseCommand {
 
     const availableContexts: string[] = this.store.get(ConfigKeys.Contexts);
 
-    const responses = await inquirer.prompt([
+    const responses = await this.inquirer.prompt([
       {
         name: 'contextName',
         type: 'input',
