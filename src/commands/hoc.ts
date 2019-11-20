@@ -1,10 +1,11 @@
-import { Command, flags } from '@oclif/command';
+import { flags } from '@oclif/command';
 import { ensureItStartsWith } from '../utils';
 import chalk = require('chalk');
+import BaseCommand from '../base';
 
 const HOC_PREFIX = 'with';
 
-export default class HocCommand extends Command {
+export default class HocCommand extends BaseCommand {
   static description = 'adds a new Higher-Order Component';
 
   static flags = {
@@ -23,6 +24,21 @@ export default class HocCommand extends Command {
   async run() {
     const { args } = this.parse(HocCommand);
 
-    this.log(`The name of the hoc is: ${chalk.green(args.name)}`);
+    const { name: hocName } = args;
+
+    // Now, generate the project
+    this.copy(
+      this.templatePath('hoc/_index.js'),
+      this.destinationPath(`src/hocs/${args.name}.tsx`),
+      { hocName },
+      (err, createdFiles) => {
+        if (err) throw err;
+        createdFiles.forEach((filePath: string) => this.log(`${chalk.green('Created')} ${filePath}`));
+      }
+    );
+
+    const STORE_KEY = 'hocs';
+
+    this.store.set(STORE_KEY, [...this.store.get(STORE_KEY), hocName])
   }
 }

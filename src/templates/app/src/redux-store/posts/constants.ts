@@ -14,11 +14,6 @@
  *
  */
 
-// F => Failure
-// I => Inprogress
-// S => Success
-// A => Actioned
-
 //#region Flags
 export const FETCH_POSTS_REQUEST__F__FISA = 'FETCH_POSTS_REQUEST__F__IFSA';
 

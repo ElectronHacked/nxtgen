@@ -41,7 +41,7 @@ export default class InitCommand extends BaseCommand {
     const { args, flags } = this.parse(InitCommand);
     let { authentication, googleAnalytics, insights, force } = flags;
 
-    let applicationName: string = args.name;
+    let projectName: string = args.name;
 
     const hasNotProvidedAnyBooleanFlag = !authentication && !googleAnalytics && !insights && !force;
 
@@ -61,7 +61,7 @@ export default class InitCommand extends BaseCommand {
         filter: (input: string) => (input ? decamelize(input.split(' ').join('-'), '-') : input),
       },
       {
-        name: 'style',
+        name: 'preprocessor',
         type: 'list',
         message: 'Please select the type of styling',
         choices: Object.values(PREPROCESSOR),
@@ -83,28 +83,33 @@ export default class InitCommand extends BaseCommand {
       },
     ]);
 
-    if (!applicationName) {
-      applicationName = decamelize(responses.applicationName.split(' ').join('-'), '-');
+    if (!projectName) {
+      projectName = decamelize(responses.applicationName.split(' ').join('-'), '-');
     }
 
     // create folder project
-    mkdirp(applicationName);
+    mkdirp(projectName);
 
     // change project root to the new folder
-    this.destinationRoot(this.destinationPath(applicationName));
-
-    this.copy(this.templatePath('app'), this.destinationPath('./'), {}, (err, createdFiles) => {
-      if (err) throw err;
-      createdFiles.forEach((filePath: string) => this.log(`${chalk.green('Created')} ${filePath}`));
-    });
-
-    // Store app name
-    this.store.set('name', applicationName);
+    this.destinationRoot(this.destinationPath(projectName));
 
     if (hasNotProvidedAnyBooleanFlag) {
       authentication = responses.authentication;
       googleAnalytics = responses.tracking.includes(WEB_TRACKING.ga);
       insights = responses.tracking.includes(WEB_TRACKING.ai);
     }
+
+    // Now, generate the project
+    this.copy(
+      this.templatePath('app'),
+      this.destinationPath('./'),
+      { projectName, preprocessor: responses.preprocessor, googleAnalytics, applicationInsights: insights },
+      (err, createdFiles) => {
+        if (err) throw err;
+        createdFiles.forEach((filePath: string) => this.log(`${chalk.green('Created')} ${filePath}`));
+      }
+    );
+
+    this.log(`this.store.path: ${this.store.path}`);
   }
 }

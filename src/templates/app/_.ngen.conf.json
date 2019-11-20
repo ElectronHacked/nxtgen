@@ -1,0 +1,30 @@
+{
+  "name": "{{projectName}}",
+  "preprocessor": "{{preprocessor}}",
+  "googleAnalytics": {{googleAnalytics}},
+  "applicationInsights": {{applicationInsights}},
+  "actions": [],
+  "pages": [],
+  "components": [],
+  "enums": [],
+  "hooks": [],
+  "apis": [],
+  "hocs": [],
+  "contexts": [],
+  "stores": [{
+    "name": "flags",
+    "actions": [
+      "setIsInProgressFlag",
+      "setSucceededFlag",
+      "setFailedFlag",
+      "setActionedFlag",
+      "resetSucceededFlag",
+      "resetFailedFlag",
+      "resetActionedFlag",
+      "resetAllFlag"
+    ]
+  }, {
+    "name": "route",
+    "actions": ["goingToRoute"]
+  }]
+}

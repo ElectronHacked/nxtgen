@@ -1,12 +1,12 @@
 {
-  "name": "@shesha/nextgen",
+  "name": "@shesha/nextg",
   "description": "A CLI tool for generating NextJs applications",
   "version": "1.0.0",
   "author": "Phil Mashiane @ElectronHacked",
   "bin": {
-    "nxtgen": "./bin/run"
+    "nextg": "./bin/run"
   },
-  "bugs": "https://github.com/ElectronHacked/nxtgen/issues",
+  "bugs": "https://github.com/ElectronHacked/nextg/issues",
   "dependencies": {
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
@@ -62,7 +62,7 @@
     "/oclif.manifest.json",
     "/src/templates"
   ],
-  "homepage": "https://github.com/ElectronHacked/nxtgen",
+  "homepage": "https://github.com/ElectronHacked/nextg",
   "keywords": [
     "oclif"
   ],
@@ -70,12 +70,12 @@
   "main": "lib/index.js",
   "oclif": {
     "commands": "./lib/commands",
-    "bin": "nxtgen",
+    "bin": "nextg",
     "plugins": [
       "@oclif/plugin-help"
     ]
   },
-  "repository": "ElectronHacked/nxtgen",
+  "repository": "ElectronHacked/nextg",
   "scripts": {
     "postpack": "rimraf oclif.manifest.json",
     "posttest": "tslint -p test -t stylish",

@@ -12,7 +12,7 @@ type CopyCallback = (err: Error, createdFiles: string[]) => void;
 
 abstract class BaseCommand extends Command {
   public store: Conf<any>;
-  public copy: (templateDir: string, targetDir: string, vars: { [key: string]: string }, cb: CopyCallback) => void;
+  public copy: (templateDir: string, targetDir: string, vars: { [key: string]: string | boolean }, cb: CopyCallback) => void;
   readonly fs: FileEditor.Editor;
   private _destinationRoot: string;
   private _sourceRoot: string;
@@ -25,7 +25,7 @@ abstract class BaseCommand extends Command {
     this.copy = copyTemplateDir;
 
     this.store = new Conf({
-      configName: 'nxtgen-conf',
+      configName: '.ngen.conf',
       clearInvalidConfig: false, // The user might want to edit the config and when that happens, we do not want the user to lose all data. Rather throw an exception
       cwd: this.destinationPath('./'), // I want the config file to be stored within the root directory of the project
     });
