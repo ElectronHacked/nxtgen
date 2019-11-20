@@ -1,9 +1,9 @@
 import { flags } from '@oclif/command';
 import { ensureItStartsWith, listIncludes } from '../utils';
 import BaseCommand from '../base';
+import { ConfigKeys } from '../enums';
 
 const HOC_PREFIX = 'with';
-const STORE_KEY = 'hocs';
 
 export default class HocCommand extends BaseCommand {
   static description = 'adds a new Higher-Order Component';
@@ -25,7 +25,7 @@ export default class HocCommand extends BaseCommand {
 
     let { name: hocName } = args;
 
-    const availableHocs: string[] = this.store.get(STORE_KEY);
+    const availableHocs: string[] = this.store.get(ConfigKeys.Hocs);
 
     const responses = await this.inquirer.prompt([
       {
@@ -54,7 +54,7 @@ export default class HocCommand extends BaseCommand {
 
     this.fs.copyTpl(this.templatePath('hoc/_index.js'), this.destinationPath(`src/hocs/${hocName}.tsx`), { hocName });
 
-    this.store.set(STORE_KEY, [...this.store.get(STORE_KEY), hocName]);
+    this.store.set(ConfigKeys.Hocs, [...this.store.get(ConfigKeys.Hocs), hocName]);
 
     const hocsPath = this.destinationPath('src/hocs/index.ts');
 

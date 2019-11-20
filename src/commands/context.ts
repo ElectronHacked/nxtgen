@@ -3,9 +3,9 @@ import chalk = require('chalk');
 import inquirer = require('inquirer');
 import BaseCommand from '../base';
 import { ensureItEndsWith, listIncludes } from '../utils';
+import { ConfigKeys } from '../enums';
 
 const CONTEXT_SUFFIX = 'Context';
-const STORE_KEY = 'contexts';
 const ensureNameConforms = (input: string) => ensureItEndsWith(input, CONTEXT_SUFFIX);
 
 export default class ContextCommand extends BaseCommand {
@@ -28,7 +28,7 @@ export default class ContextCommand extends BaseCommand {
 
     let { name: contextName } = args;
 
-    const availableContexts: string[] = this.store.get(STORE_KEY);
+    const availableContexts: string[] = this.store.get(ConfigKeys.Contexts);
 
     const responses = await inquirer.prompt([
       {
@@ -59,7 +59,7 @@ export default class ContextCommand extends BaseCommand {
       contextName,
     });
 
-    this.store.set(STORE_KEY, [...this.store.get(STORE_KEY), contextName]);
+    this.store.set(ConfigKeys.Contexts, [...this.store.get(ConfigKeys.Contexts), contextName]);
 
     const contextPath = this.destinationPath('src/contexts/index.ts');
 
