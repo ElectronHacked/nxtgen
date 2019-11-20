@@ -1,6 +1,6 @@
 import { flags } from '@oclif/command';
-import { ensureItStartsWith } from '../utils';
-import chalk = require('chalk');
+import { ensureItStartsWith, listIncludes } from '../utils';
+import inquirer = require('inquirer');
 import BaseCommand from '../base';
 
 const HOC_PREFIX = 'with';
@@ -16,29 +16,59 @@ export default class HocCommand extends BaseCommand {
     {
       name: 'name',
       description: 'name of the higher-order component',
-      required: true,
-      parse: (input: string) => ensureItStartsWith(input, HOC_PREFIX),
+      parse: (input: string) => ensureItStartsWith(input, HOC_PREFIX, false),
     },
   ];
 
   async run() {
     const { args } = this.parse(HocCommand);
 
-    const { name: hocName } = args;
+    let { name: hocName } = args;
 
-    // Now, generate the project
-    this.copy(
-      this.templatePath('hoc/_index.js'),
-      this.destinationPath(`src/hocs/${args.name}.tsx`),
-      { hocName },
-      (err, createdFiles) => {
-        if (err) throw err;
-        createdFiles.forEach((filePath: string) => this.log(`${chalk.green('Created')} ${filePath}`));
-      }
-    );
+    const availableHocs: string[] = this.store.get('hocs');
+
+    const responses = await inquirer.prompt([
+      {
+        name: 'responses',
+        type: 'input',
+        message: 'Please enter name of the HOC',
+        validate: (value: string) => {
+          if (!value) {
+            return 'Please enter name of the HOC';
+          }
+
+          const hoc = ensureItStartsWith(value, HOC_PREFIX, false);
+
+          if (listIncludes(availableHocs, hoc)) {
+            return `${value} already exists. Please enter the name that does not exist`;
+          }
+
+          return true;
+        },
+        when: !args.name || listIncludes(availableHocs, args.name),
+        filter: (input: string) => ensureItStartsWith(input, HOC_PREFIX, false),
+      },
+    ]);
+
+    hocName = hocName || responses.responses;
+
+    this.fs.copyTpl(this.templatePath('hoc/_index.js'), this.destinationPath(`src/hocs/${hocName}.tsx`), { hocName });
 
     const STORE_KEY = 'hocs';
 
-    this.store.set(STORE_KEY, [...this.store.get(STORE_KEY), hocName])
+    this.store.set(STORE_KEY, [...this.store.get(STORE_KEY), hocName]);
+
+    const hocsPath = this.destinationPath('src/hocs/index.ts');
+
+    // update hocs/index.d.ts to add the new namespace to the list
+    this.fs.copy(hocsPath, hocsPath, {
+      process(content) {
+        const regEx = new RegExp(/\/\* NEW_HOC_IMPORT \*\//, 'g');
+        const newContent = content
+          .toString()
+          .replace(regEx, `export { default as ${hocName} } from './${hocName}';\n/* NEW_HOC_IMPORT */`);
+        return newContent;
+      },
+    });
   }
 }

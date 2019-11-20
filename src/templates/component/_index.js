@@ -1,14 +1,16 @@
-import React, { FC,ReactNode } from 'react';
-import './styles.scss';
+import React, { FC, ComponentType } from 'react';
 
-interface IProps {
-  readonly children?: ReactNode 
+/**
+ *
+ * @param Component - the component that is passed into the HOC can be either a function component or class component.
+ *
+ * @see https://medium.com/@jrwebdev/react-higher-order-component-patterns-in-typescript-42278f7590fb
+ */
+
+const <%= hocName %> = <P extends object>(Component: ComponentType<P>): FC<P> => (props: P) => {
+  // Your logic comes up in here
+
+  return <Component {...props} />;
 };
 
-const {{component}}: FC<IProps> = ({ children }) => (
-  <div className="{{className}}">
-    {{component}} component
-  </div>
-);
-
-export default {{component}};
+export default <%= hocName %>;

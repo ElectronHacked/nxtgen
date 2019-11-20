@@ -7,10 +7,10 @@ import React, { FC, ComponentType } from 'react';
  * @see https://medium.com/@jrwebdev/react-higher-order-component-patterns-in-typescript-42278f7590fb
  */
 
-const {{hocName}} = <P extends object>(Component: ComponentType<P>): FC<P> => (props: P) => {
+const <%= hocName %> = <P extends object>(Component: ComponentType<P>): FC<P> => (props: P) => {
   // Your logic comes up in here
 
   return <Component {...props} />;
 };
 
-export default {{hocName}};
+export default <%= hocName %>;

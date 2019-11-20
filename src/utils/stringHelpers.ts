@@ -7,7 +7,7 @@ import camelcase from 'camelcase';
  */
 export const ensureItStartsWith = (value: string, prefix: string, pascalCase = false) => {
   return new RegExp(`^${prefix}`, 'i').test(value)
-    ? camelcase(value, { pascalCase: true })
+    ? camelcase(value, { pascalCase })
     : `${prefix}${camelcase(value, { pascalCase })}`;
 };
 

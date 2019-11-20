@@ -6,13 +6,19 @@ import fs = require('fs');
 import memFs = require('mem-fs');
 import FileEditor = require('mem-fs-editor');
 import Conf = require('conf');
+import chalk = require('chalk');
 const copyTemplateDir = require('copy-template-dir');
 
 type CopyCallback = (err: Error, createdFiles: string[]) => void;
 
 abstract class BaseCommand extends Command {
   public store: Conf<any>;
-  public copy: (templateDir: string, targetDir: string, vars: { [key: string]: string | boolean }, cb: CopyCallback) => void;
+  public copyTemplateDir: (
+    templateDir: string,
+    targetDir: string,
+    vars: { [key: string]: string | boolean },
+    cb: CopyCallback
+  ) => void;
   readonly fs: FileEditor.Editor;
   private _destinationRoot: string;
   private _sourceRoot: string;
@@ -22,7 +28,7 @@ abstract class BaseCommand extends Command {
 
     this._destinationRoot = '';
     this._sourceRoot = '';
-    this.copy = copyTemplateDir;
+    this.copyTemplateDir = copyTemplateDir;
 
     this.store = new Conf({
       configName: '.ngen.conf',
@@ -32,6 +38,8 @@ abstract class BaseCommand extends Command {
 
     const sharedFs = memFs.create();
     this.fs = FileEditor.create(sharedFs);
+
+    sharedFs.on('change', this._writeFiles.bind(this));
   }
 
   /**
@@ -100,6 +108,20 @@ abstract class BaseCommand extends Command {
     }
 
     return filepath;
+  }
+
+  /**
+   * Write memory fs file to disk and logging results
+   * @private
+   */
+  _writeFiles() {
+    if (this.fs) {
+      this.fs.commit(err => {
+        if (err) {
+          this.error(`Sorry, and ${chalk.red.bold('error')} occured and while persisting the data`);
+        }
+      });
+    }
   }
 }
 

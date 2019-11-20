@@ -100,7 +100,7 @@ export default class InitCommand extends BaseCommand {
     }
 
     // Now, generate the project
-    this.copy(
+    this.copyTemplateDir(
       this.templatePath('app'),
       this.destinationPath('./'),
       { projectName, preprocessor: responses.preprocessor, googleAnalytics, applicationInsights: insights },
