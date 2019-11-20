@@ -4,6 +4,7 @@ import inquirer = require('inquirer');
 import BaseCommand from '../base';
 
 const HOC_PREFIX = 'with';
+const STORE_KEY = 'hocs';
 
 export default class HocCommand extends BaseCommand {
   static description = 'adds a new Higher-Order Component';
@@ -25,7 +26,7 @@ export default class HocCommand extends BaseCommand {
 
     let { name: hocName } = args;
 
-    const availableHocs: string[] = this.store.get('hocs');
+    const availableHocs: string[] = this.store.get(STORE_KEY);
 
     const responses = await inquirer.prompt([
       {
@@ -54,13 +55,11 @@ export default class HocCommand extends BaseCommand {
 
     this.fs.copyTpl(this.templatePath('hoc/_index.js'), this.destinationPath(`src/hocs/${hocName}.tsx`), { hocName });
 
-    const STORE_KEY = 'hocs';
-
     this.store.set(STORE_KEY, [...this.store.get(STORE_KEY), hocName]);
 
     const hocsPath = this.destinationPath('src/hocs/index.ts');
 
-    // update hocs/index.d.ts to add the new namespace to the list
+    // update hocs/index.ts to add the new namespace to the list
     this.fs.copy(hocsPath, hocsPath, {
       process(content) {
         const regEx = new RegExp(/\/\* NEW_HOC_IMPORT \*\//, 'g');
