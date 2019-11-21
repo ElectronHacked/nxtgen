@@ -1,8 +1,8 @@
 import { flags } from '@oclif/command';
-import BaseCommand from '../base';
-import { listIncludes, camelCase } from '../utils';
-import { ConfigKeys } from '../enums';
-import { IPageConfig } from '../models';
+import BaseCommand from '../../base';
+import { listIncludes, camelCase } from '../../tools';
+import { ConfigKeys } from '../../enums';
+import { IPageConfig } from '../../models';
 
 export default class ComponentCommand extends BaseCommand {
   static description = 'adds a new component';
@@ -71,7 +71,7 @@ export default class ComponentCommand extends BaseCommand {
     componentName = responses.componentName || componentName;
 
     this.fs.copyTpl(this.templatePath('context/_index.js'), this.destinationPath(`src/contexts/${componentName}.tsx`), {
-      componentName: componentName,
+      componentName,
     });
 
     this.store.set(ConfigKeys.Contexts, [...this.store.get(ConfigKeys.Contexts), componentName]);
@@ -86,7 +86,7 @@ export default class ComponentCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_CONTEXT_IMPORT \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${componentName} } from './${componentName}';\n/* NEW_CONTEXT_IMPORT */`);
+          .replace(regEx, `export { default as ${componentName} from './${componentName}';\n/* NEW_CONTEXT_IMPORT */`);
         return newContent;
       },
     });

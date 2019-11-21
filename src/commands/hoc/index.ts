@@ -1,7 +1,7 @@
 import { flags } from '@oclif/command';
-import { ensureItStartsWith, listIncludes } from '../utils';
-import BaseCommand from '../base';
-import { ConfigKeys } from '../enums';
+import { ensureItStartsWith, listIncludes } from '../../tools';
+import BaseCommand from '../../base';
+import { ConfigKeys } from '../../enums';
 
 const HOC_PREFIX = 'with';
 
@@ -64,7 +64,7 @@ export default class HocCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_HOC_IMPORT \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${hocName} } from './${hocName}';\n/* NEW_HOC_IMPORT */`);
+          .replace(regEx, `export { default as ${hocName} from './${hocName}';\n/* NEW_HOC_IMPORT */`);
         return newContent;
       },
     });

@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
 import Listr = require('listr');
-import { makeGetRequest } from './../utils/http';
+import { makeGetRequest } from '../../tools';
 import chalk = require('chalk');
 
 export default class SwagCommand extends Command {

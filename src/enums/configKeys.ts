@@ -6,11 +6,11 @@ export enum ConfigKeys {
   Actions = 'actions',
   Pages = 'pages',
   Components = 'components',
-  Enums = 'enums',
+  Enums = '../../enums',
   Hooks = 'hooks',
   Apis = 'apis',
   Hocs = 'hocs',
   Contexts = 'contexts',
   Stores = 'stores',
-  Models = 'models',
+  Models = '../../models',
 }

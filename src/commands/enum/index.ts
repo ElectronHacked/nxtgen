@@ -1,7 +1,7 @@
 import { flags } from '@oclif/command';
-import { listIncludes, pascalCase, camelCase } from '../utils';
-import BaseCommand from '../base';
-import { ConfigKeys } from '../enums';
+import { listIncludes, pascalCase, camelCase } from '../../tools';
+import BaseCommand from '../../base';
+import { ConfigKeys } from '../../enums';
 
 export default class EnumCommand extends BaseCommand {
   static description = 'adds a new enum';
@@ -52,9 +52,11 @@ export default class EnumCommand extends BaseCommand {
 
     enumName = responses.enumName || enumName;
 
-    const nameToCamelCase = camelCase(enumName)
+    const nameToCamelCase = camelCase(enumName);
 
-    this.fs.copyTpl(this.templatePath('enum/_index.js'), this.destinationPath(`src/enums/${nameToCamelCase}.tsx`), { enumName });
+    this.fs.copyTpl(this.templatePath('enum/_index.js'), this.destinationPath(`src/enums/${nameToCamelCase}.tsx`), {
+      enumName,
+    });
 
     this.store.set(ConfigKeys.Enums, [...this.store.get(ConfigKeys.Enums), enumName]);
 
@@ -66,7 +68,7 @@ export default class EnumCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_ENUM_IMPORT \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${enumName} } from './${nameToCamelCase}';\n/* NEW_ENUM_IMPORT */`);
+          .replace(regEx, `export { default as ${enumName} from './${nameToCamelCase}';\n/* NEW_ENUM_IMPORT */`);
         return newContent;
       },
     });

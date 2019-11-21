@@ -1,7 +1,7 @@
 import { flags } from '@oclif/command';
-import BaseCommand from '../base';
-import { ensureItEndsWith, listIncludes } from '../utils';
-import { ConfigKeys } from '../enums';
+import BaseCommand from '../../base';
+import { ensureItEndsWith, listIncludes } from '../../tools';
+import { ConfigKeys } from '../../enums';
 
 const CONTEXT_SUFFIX = 'Context';
 const ensureNameConforms = (input: string) => ensureItEndsWith(input, CONTEXT_SUFFIX);
@@ -69,7 +69,7 @@ export default class ContextCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_CONTEXT_IMPORT \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${contextName} } from './${contextName}';\n/* NEW_CONTEXT_IMPORT */`);
+          .replace(regEx, `export { default as ${contextName} from './${contextName}';\n/* NEW_CONTEXT_IMPORT */`);
         return newContent;
       },
     });

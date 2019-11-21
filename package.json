@@ -43,6 +43,7 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^10.17.5",
     "@types/qs": "^6.9.0",
+    "babel-plugin-module-resolver": "^3.2.0",
     "chai": "^4.2.0",
     "globby": "^10.0.1",
     "mocha": "^5.2.0",

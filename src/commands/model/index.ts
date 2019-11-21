@@ -1,9 +1,9 @@
 import { flags } from '@oclif/command';
-import BaseCommand from '../base';
-import { ConfigKeys } from '../enums';
-import { pascalCase, camelCase, listIncludes } from './../utils';
+import BaseCommand from '../../base';
+import { ConfigKeys } from '../../enums';
+import { pascalCase, camelCase, listIncludes } from '../../tools';
 
-const ensureTheNameConforms = (input: string) => `I${pascalCase(input)}`
+const ensureTheNameConforms = (input: string) => `I${pascalCase(input)}`;
 
 export default class ModelCommand extends BaseCommand {
   static description = 'adds a new model/interface';
@@ -55,7 +55,9 @@ export default class ModelCommand extends BaseCommand {
     const interfaceName = ensureTheNameConforms(modelName);
     const fileName = camelCase(modelName);
 
-    this.fs.copyTpl(this.templatePath('model/_index.js'), this.destinationPath(`src/models/${fileName}.d.ts`), { interfaceName });
+    this.fs.copyTpl(this.templatePath('model/_index.js'), this.destinationPath(`src/models/${fileName}.d.ts`), {
+      interfaceName,
+    });
 
     this.store.set(ConfigKeys.Models, [...this.store.get(ConfigKeys.Models), interfaceName]);
 
@@ -67,7 +69,7 @@ export default class ModelCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_INTERFACE_IMPORT \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { ${interfaceName} } from './${fileName}';\n/* NEW_INTERFACE_IMPORT */`);
+          .replace(regEx, `export { ${interfaceName} from './${fileName}';\n/* NEW_INTERFACE_IMPORT */`);
         return newContent;
       },
     });

@@ -2,8 +2,8 @@ import { flags } from '@oclif/command';
 import chalk = require('chalk');
 const mkdirp = require('mkdirp');
 import decamelize = require('decamelize');
-import { PREPROCESSOR, WEB_TRACKING } from '../config';
-import BaseCommand from '../base';
+import { PREPROCESSOR, WEB_TRACKING } from '../../config';
+import BaseCommand from '../../base';
 
 export default class InitCommand extends BaseCommand {
   static description = 'generates a new project';

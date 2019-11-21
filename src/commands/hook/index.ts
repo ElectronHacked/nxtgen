@@ -1,7 +1,7 @@
 import { flags } from '@oclif/command';
-import BaseCommand from '../base';
-import { ensureItStartsWith, listIncludes } from '../utils';
-import { ConfigKeys } from '../enums';
+import BaseCommand from '../../base';
+import { ensureItStartsWith, listIncludes } from '../../tools';
+import { ConfigKeys } from '../../enums';
 
 const HOOK_PREFIX = 'use';
 const ensureNameConforms = (input: string) => ensureItStartsWith(input, HOOK_PREFIX);
@@ -28,7 +28,7 @@ export default class HookCommand extends BaseCommand {
 
     const availableHooks: string[] = this.store.get(ConfigKeys.Hooks);
 
-    const PROMPT_MSG = 'Please enter name of the hook (should start with "use")'
+    const PROMPT_MSG = 'Please enter name of the hook (should start with "use")';
 
     const responses = await this.inquirer.prompt([
       {
@@ -55,7 +55,9 @@ export default class HookCommand extends BaseCommand {
 
     hookName = responses.hookName || hookName;
 
-    this.fs.copyTpl(this.templatePath('hook/_index.js'), this.destinationPath(`src/hooks/${hookName}.tsx`), { hookName });
+    this.fs.copyTpl(this.templatePath('hook/_index.js'), this.destinationPath(`src/hooks/${hookName}.tsx`), {
+      hookName,
+    });
 
     this.store.set(ConfigKeys.Hooks, [...this.store.get(ConfigKeys.Hooks), hookName]);
 
@@ -67,7 +69,7 @@ export default class HookCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_HOOK_IMPORT \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${hookName} } from './${hookName}';\n/* NEW_HOOK_IMPORT */`);
+          .replace(regEx, `export { default as ${hookName} from './${hookName}';\n/* NEW_HOOK_IMPORT */`);
         return newContent;
       },
     });
