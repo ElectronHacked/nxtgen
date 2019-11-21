@@ -4,7 +4,7 @@ import { LayoutHeader, LayoutHeaderTitle, SidebarMenuLink } from './styled';
 import { ILayoutHeadProps } from 'models/layoutHeadProps';
 import Head from './head';
 import { APP_ROUTES } from 'routes';
-import { IRoute } from '../../models';
+import { IRoute } from 'models';
 
 const { Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
