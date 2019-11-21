@@ -18,6 +18,7 @@
     "copy-template-dir": "^1.4.0",
     "cpy": "^7.3.0",
     "decamelize": "^3.2.0",
+    "humanize-string": "^2.1.0",
     "inquirer": "^7.0.0",
     "jsonfile": "^5.0.0",
     "listr": "^0.14.3",

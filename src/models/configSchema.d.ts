@@ -3,6 +3,11 @@ export interface IPageConfig {
   path: string;
 }
 
+export interface IComponentConfig {
+  name: string;
+  page?: string; // If not provided, it's a global component
+}
+
 export interface IConfigStore {
   name: string;
   actions: string[];
@@ -14,7 +19,7 @@ export interface IConfigSchema {
   googleAnalytics: boolean;
   applicationInsights: boolean;
   pages: IPageConfig[];
-  components: string[];
+  components: IComponentConfig[];
   enums: string[];
   models: string[];
   hooks: string[];

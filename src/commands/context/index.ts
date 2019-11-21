@@ -28,14 +28,16 @@ export default class ContextCommand extends BaseCommand {
 
     const availableContexts: string[] = this.store.get(ConfigKeys.Contexts);
 
+    const NAME_PROMPT_MSG = 'Please enter name of the context'; 
+
     const responses = await this.inquirer.prompt([
       {
         name: 'contextName',
         type: 'input',
-        message: 'Please enter name of the context',
+        message: NAME_PROMPT_MSG,
         validate: (value: string) => {
           if (!value) {
-            return 'Please enter name of the context';
+            return NAME_PROMPT_MSG;
           }
 
           const hoc = ensureNameConforms(value);
