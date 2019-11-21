@@ -4,7 +4,16 @@
   "googleAnalytics": {{googleAnalytics}},
   "applicationInsights": {{applicationInsights}},
   "actions": [],
-  "pages": [],
+  "pages": [
+    {
+      "name": "about",
+      "path": "about"
+    },
+    {
+      "name": "index",
+      "path": "index"
+    },
+  ],
   "components": [],
   "enums": [],
   "models": [],

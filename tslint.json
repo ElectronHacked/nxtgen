@@ -1,7 +1,8 @@
 {
   "extends": "@oclif/tslint",
   "rules": {
-    "ordered-imports": false
+    "ordered-imports": false,
+    "file-name-casing": [true, "camel-case"]
   },
   "linterOptions": {
     "exclude": [

@@ -1,12 +1,11 @@
 import { flags } from '@oclif/command';
-import { listIncludes } from '../utils';
 import BaseCommand from '../base';
 import { ConfigKeys } from '../enums';
-import { pascalCase, camelCase } from './../utils/stringHelpers';
+import { pascalCase, camelCase, listIncludes } from './../utils';
 
 const ensureTheNameConforms = (input: string) => `I${pascalCase(input)}`
 
-export default class HocCommand extends BaseCommand {
+export default class ModelCommand extends BaseCommand {
   static description = 'adds a new model/interface';
 
   static flags = {
@@ -21,7 +20,7 @@ export default class HocCommand extends BaseCommand {
   ];
 
   async run() {
-    const { args } = this.parse(HocCommand);
+    const { args } = this.parse(ModelCommand);
 
     let { name: modelName } = args;
 

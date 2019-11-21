@@ -1,16 +1,2 @@
-export enum ConfigKeys {
-  Name = 'name',
-  Preprocessor = 'preprocessor',
-  GoogleAnalytics = 'googleAnalytics',
-  ApplicationInsights = 'applicationInsights',
-  Actions = 'actions',
-  Pages = 'pages',
-  Components = 'components',
-  Enums = 'enums',
-  Hooks = 'hooks',
-  Apis = 'apis',
-  Hocs = 'hocs',
-  Contexts = 'contexts',
-  Stores = 'stores',
-  Models = 'models',
-}
+export { ConfigKeys } from './configKeys';
+export { Preprocessor } from './preprocessor';

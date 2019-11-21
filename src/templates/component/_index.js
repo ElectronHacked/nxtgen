@@ -1,16 +1,12 @@
-import React, { FC, ComponentType } from 'react';
+import React, { FC } from 'react';
+import './styles.scss';
 
-/**
- *
- * @param Component - the component that is passed into the HOC can be either a function component or class component.
- *
- * @see https://medium.com/@jrwebdev/react-higher-order-component-patterns-in-typescript-42278f7590fb
- */
+interface IProps {};
 
-const <%= hocName %> = <P extends object>(Component: ComponentType<P>): FC<P> => (props: P) => {
-  // Your logic comes up in here
+export const <%= componentName %>: FC<IProps> = () => (
+  <div className="<%= className %>">
+    <%= componentName %> componentName
+  </div>
+);
 
-  return <Component {...props} />;
-};
-
-export default <%= hocName %>;
+export default <%= componentName %>;

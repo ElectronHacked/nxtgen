@@ -1,0 +1,1 @@
+export { IPageConfig } from './configSchema'
