@@ -101,6 +101,20 @@ abstract class BaseCommand extends Command {
 
     return filepath;
   }
+  /**
+   * Join a path to the source root.
+   * @param  {...String} path
+   * @return {String}    joined path
+   */
+  dirPath(targetPath: string) {
+    let filepath = path.resolve(__dirname, `../templates/${targetPath}`);
+
+    if (!path.isAbsolute(filepath)) {
+      filepath = path.join(this.sourceRoot(), filepath);
+    }
+
+    return filepath;
+  }
 
   /**
    * Join a path to the destination root.
@@ -118,10 +132,19 @@ abstract class BaseCommand extends Command {
   }
 
   /**
+   * Join a path to the source directory
+   * @param  {...String} path
+   * @return {String}    joined path
+   */
+  sourcePath(destination: string) {
+    return path.resolve(`./src/${destination}`);
+  }
+
+  /**
    * Write memory fs file to disk and logging results
    * @private
    */
-  _writeFiles() {
+  private _writeFiles() {
     if (this.fs) {
       this.fs.commit(err => {
         if (err) {

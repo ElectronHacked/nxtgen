@@ -1,1 +1,3 @@
-export { IPageConfig } from './configSchema'
+export { IRoute } from './route';
+export { IPageConfig } from './configSchema';
+
