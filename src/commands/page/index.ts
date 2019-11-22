@@ -7,6 +7,9 @@ import { ensureItEndsWith, listIncludes, pascalCase } from '../../tools';
 import { ConfigKeys } from '../../enums';
 import { IPageConfig } from '../../models';
 import decamelize = require('decamelize');
+const fuzzy = require('fuzzy');
+const _ = require('lodash');
+import { ICON_NAMES } from '../../constants';
 
 export default class PageCommand extends BaseCommand {
   static description = 'adds a new page';
@@ -74,6 +77,12 @@ export default class PageCommand extends BaseCommand {
             default: false,
           },
           {
+            name: 'pageIcon',
+            message: 'Select the page icon - https://ant.design/components/icon',
+            type: 'autocomplete',
+            source: this.searchIcons,
+          },
+          {
             when(response) {
               return response.isNestedPage && !!availablePages.length;
             },
@@ -96,14 +105,14 @@ export default class PageCommand extends BaseCommand {
     }
 
     const orifinalPageName = pageName;
-    
+
     pageName = decamelize(pageName);
 
     const { isNestedPage, parentPage, title } = responses;
 
     const isNested = args.name ? flags.nested : isNestedPage;
 
-    const pagePath = isNested? `${parentPage}/${pageName}` : pageName;
+    const pagePath = isNested ? `${parentPage}/${pageName}` : pageName;
 
     const className = `${pageName}-page`;
 
@@ -118,9 +127,8 @@ export default class PageCommand extends BaseCommand {
     this.fs.copyTpl(this.templatePath('page/_index.js'), this.destinationPath(`${pagePageWithRoot}/index.tsx`), {
       componentName,
       title,
-      className
+      className,
     });
-
 
     // copy styles.scss
     this.fs.copyTpl(this.templatePath('page/_styles.scss'), this.destinationPath(`${pagePageWithRoot}/styles.scss`), {
@@ -128,5 +136,19 @@ export default class PageCommand extends BaseCommand {
     });
 
     // Update the config file with the new page
+  }
+
+  searchIcons(_answers: any, input: string) {
+    input = input || '';
+    return new Promise(function(resolve) {
+      setTimeout(function() {
+        var fuzzyResult = fuzzy.filter(input, ICON_NAMES);
+        resolve(
+          fuzzyResult.map(function(el: any) {
+            return el.original;
+          })
+        );
+      }, _.random(30, 500));
+    });
   }
 }

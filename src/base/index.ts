@@ -10,6 +10,10 @@ import chalk = require('chalk');
 import inquirer = require('inquirer');
 const copyTemplateDir = require('copy-template-dir');
 
+// Register inquirer plugins
+inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
+inquirer.registerPrompt('suggest', require('inquirer-prompt-suggest'));
+
 type CopyCallback = (err: Error, createdFiles: string[]) => void;
 
 abstract class BaseCommand extends Command {
