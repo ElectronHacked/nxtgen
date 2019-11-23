@@ -90,7 +90,7 @@ export default class InitCommand extends BaseCommand {
     mkdirp(projectName);
 
     // change project root to the new folder
-    this.destinationRoot(this.destinationPath(projectName));
+    this.destinationRoot(this.rootDestinationPath(projectName));
 
     if (hasNotProvidedAnyBooleanFlag) {
       authentication = responses.authentication;
@@ -101,7 +101,7 @@ export default class InitCommand extends BaseCommand {
     // Now, generate the project
     this.copyTemplateDir(
       this.templatePath('app'),
-      this.destinationPath('./'),
+      this.rootDestinationPath('./'),
       { projectName, preprocessor: responses.preprocessor, googleAnalytics, applicationInsights: insights },
       (err, createdFiles) => {
         if (err) throw err;

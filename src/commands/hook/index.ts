@@ -55,13 +55,13 @@ export default class HookCommand extends BaseCommand {
 
     hookName = responses.hookName || hookName;
 
-    this.fs.copyTpl(this.templatePath('hook/_index.js'), this.destinationPath(`src/hooks/${hookName}.tsx`), {
+    this.fs.copyTpl(this.templatePath('hook/_index.js'), this.rootDestinationPath(`src/hooks/${hookName}.tsx`), {
       hookName,
     });
 
     this.store.set(ConfigKeys.Hooks, [...this.store.get(ConfigKeys.Hooks), hookName]);
 
-    const hookPath = this.destinationPath('src/hooks/index.ts');
+    const hookPath = this.rootDestinationPath('src/hooks/index.ts');
 
     // update hooks/index.ts to add the new namespace to the list
     this.fs.copy(hookPath, hookPath, {

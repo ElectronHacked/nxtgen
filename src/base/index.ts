@@ -40,7 +40,7 @@ abstract class BaseCommand extends Command {
     this.store = new Conf({
       configName: '.ngen.conf',
       clearInvalidConfig: false, // The user might want to edit the config and when that happens, we do not want the user to lose all data. Rather throw an exception
-      cwd: this.destinationPath('./'), // I want the config file to be stored within the root directory of the project
+      cwd: this.rootDestinationPath('./'), // I want the config file to be stored within the root directory of the project
     });
 
     const sharedFs = memFs.create();
@@ -121,8 +121,23 @@ abstract class BaseCommand extends Command {
    * @param  {...String} path
    * @return {String}    joined path
    */
-  destinationPath(...args: string[]) {
+  rootDestinationPath(...args: string[]) {
     let filepath = path.join.apply(path, args);
+
+    if (!path.isAbsolute(filepath)) {
+      filepath = path.join(this.destinationRoot(), filepath);
+    }
+
+    return filepath;
+  }
+
+  /**
+   * Join a path to the source destination root.
+   * @param  {...String} path
+   * @return {String}    joined path
+   */
+  sourceDestinationPath(...args: string[]) {
+    let filepath = `src/${path.join.apply(path, args)}`;
 
     if (!path.isAbsolute(filepath)) {
       filepath = path.join(this.destinationRoot(), filepath);

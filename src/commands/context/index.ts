@@ -55,15 +55,13 @@ export default class ContextCommand extends BaseCommand {
 
     contextName = responses.contextName || contextName;
 
-    this.fs.copyTpl(this.templatePath('context/_index.js'), this.destinationPath(`src/contexts/${contextName}.tsx`), {
+    this.fs.copyTpl(this.templatePath('context/_index.js'), this.rootDestinationPath(`src/contexts/${contextName}.tsx`), {
       contextName,
     });
 
     this.store.set(ConfigKeys.Contexts, [...this.store.get(ConfigKeys.Contexts), contextName]);
 
-    const contextPath = this.destinationPath('src/contexts/index.ts');
-
-    // const replatePattern = '\/* NEW_CONTEXT_IMPORT *\/';
+    const contextPath = this.rootDestinationPath('src/contexts/index.ts');
 
     // update contexts/index.ts to add the new namespace to the list
     this.fs.copy(contextPath, contextPath, {

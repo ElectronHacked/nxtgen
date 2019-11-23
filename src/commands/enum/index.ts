@@ -1,5 +1,5 @@
 import { flags } from '@oclif/command';
-import { listIncludes, pascalCase, camelCase } from '../../tools';
+import { listIncludes, pascalCase, camelCaseString } from '../../tools';
 import BaseCommand from '../../base';
 import { ConfigKeys } from '../../enums';
 
@@ -52,15 +52,15 @@ export default class EnumCommand extends BaseCommand {
 
     enumName = responses.enumName || enumName;
 
-    const nameToCamelCase = camelCase(enumName);
+    const nameToCamelCase = camelCaseString(enumName);
 
-    this.fs.copyTpl(this.templatePath('enum/_index.js'), this.destinationPath(`src/enums/${nameToCamelCase}.tsx`), {
+    this.fs.copyTpl(this.templatePath('enum/_index.js'), this.rootDestinationPath(`src/enums/${nameToCamelCase}.tsx`), {
       enumName,
     });
 
     this.store.set(ConfigKeys.Enums, [...this.store.get(ConfigKeys.Enums), enumName]);
 
-    const enumsPath = this.destinationPath('src/enums/index.ts');
+    const enumsPath = this.rootDestinationPath('src/enums/index.ts');
 
     // update enums/index.ts to add the new namespace to the list
     this.fs.copy(enumsPath, enumsPath, {

@@ -3,12 +3,11 @@ import BaseCommand from '../../base';
 import chalk = require('chalk');
 const humanizeString = require('humanize-string');
 const mkdirp = require('mkdirp');
-import { listIncludes, pascalCase } from '../../tools';
+import { listIncludes, pascalCase, hiphenizeString } from '../../tools';
 import { ConfigKeys } from '../../enums';
 import { IPageConfig, IRoute } from '../../models';
-import decamelize = require('decamelize');
 const fuzzy = require('fuzzy');
-const _ = require('lodash');
+import _ = require('lodash');
 import { ICON_NAMES } from '../../constants';
 
 export default class PageCommand extends BaseCommand {
@@ -41,10 +40,10 @@ export default class PageCommand extends BaseCommand {
 
     const NAME_PROMPT_MSG = 'Please enter name of the page';
 
-    const shouldPromptForName = !name;
-    const shouldPromptForNested = !name;
-    const shouldPromptForConceal = !name;
-    const shouldPromptForTitle = !title || !name;
+    const shouldPromptForName = !pageName;
+    const shouldPromptForNested = !pageName;
+    const shouldPromptForConceal = !pageName;
+    const shouldPromptForTitle = !title || !pageName;
     const shouldPromptForIcon = (icon && !listIncludes(ICON_NAMES, icon)) || !icon;
 
     const responses = await this.inquirer
@@ -137,7 +136,7 @@ export default class PageCommand extends BaseCommand {
 
     const orifinalPageName = pageName;
 
-    pageName = decamelize(pageName);
+    pageName = hiphenizeString(pageName);
 
     const { isNestedPage, parentPage, pageTitle, isHiddenPageLink, pageIcon } = responses;
 
@@ -160,28 +159,40 @@ export default class PageCommand extends BaseCommand {
     mkdirp(pagePageWithRoot);
 
     // copy page into the pages folder
-    this.fs.copyTpl(this.templatePath('page/_index.js'), this.destinationPath(`${pagePageWithRoot}/index.tsx`), {
+    this.fs.copyTpl(this.templatePath('page/_index.js'), this.sourceDestinationPath(`${pagePageWithRoot}/index.tsx`), {
       componentName,
       title,
       className,
     });
 
-    // copy styles.scss
-    this.fs.copyTpl(this.templatePath('page/_styles.scss'), this.destinationPath(`${pagePageWithRoot}/styles.scss`), {
-      className,
-    });
+    // // copy styles.scss
+    this.fs.copyTpl(
+      this.templatePath('page/_styles.scss'),
+      this.sourceDestinationPath(`${pagePageWithRoot}/styles.scss`),
+      {
+        className,
+      }
+    );
+
+    // Update the config file with the new page
+    const newPage: IPageConfig = {
+      name: pageName,
+      path: pagePath
+    }
+
+    this.store.set(ConfigKeys.Pages, _.sortBy([...availablePages, newPage], 'name'));
 
     const pageRoute: IRoute = {
       name: pagePath,
-      linkTo: `./${pagePath}`,
+      linkTo: `/${pagePath}`,
       hide: conceal,
       icon,
       displayName: title,
     };
 
-    const routePath = this.sourcePath('routes/routes.json');
+    const routePath = this.sourceDestinationPath('routes/routes.json');
 
-    // Now, update the route.json file with this page
+    // // Now, update the route.json file with this page
     let routes: IRoute[] = this.fs.readJSON(routePath);
 
     if (nested) {
@@ -190,7 +201,7 @@ export default class PageCommand extends BaseCommand {
       routes.push(pageRoute);
     }
 
-    // Update the route.json file
+    // // Update the route.json file
     this.fs.writeJSON(routePath, routes);
   }
 
@@ -213,9 +224,11 @@ export default class PageCommand extends BaseCommand {
       if (page.name === parent) {
         if (page.children) {
           page.children.push(childPage);
+        } else {
+          page.children = [childPage];
         }
       } else if (page.children) {
-        this.injectNestedPage(pages, childPage, parent);
+        this.injectNestedPage(page.children, childPage, parent);
       }
     });
   }

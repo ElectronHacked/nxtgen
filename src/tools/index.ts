@@ -5,5 +5,7 @@ export { makeDeleteRequest } from './http';
 export { ensureItStartsWith } from './stringHelpers';
 export { ensureItEndsWith } from './stringHelpers';
 export { pascalCase } from './stringHelpers';
-export { camelCase } from './stringHelpers';
+export { camelCaseString } from './stringHelpers';
+export { decamelizeString } from './stringHelpers';
+export { hiphenizeString } from './stringHelpers';
 export { listIncludes } from './arrayHelpters';

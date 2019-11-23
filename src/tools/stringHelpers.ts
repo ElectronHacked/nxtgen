@@ -1,4 +1,6 @@
 import camelcase from 'camelcase';
+import decamelize = require('decamelize');
+const hyphenize = require('hyphenize');
 
 /**
  * Ensure that a given string starts with a given prefix
@@ -22,7 +24,10 @@ export const ensureItEndsWith = (value: string, suffix: string) => {
     : `${camelcase(value, { pascalCase: true })}${suffix}`;
 };
 
-
 export const pascalCase = (input: string) => camelcase(input, { pascalCase: true });
 
-export const camelCase = (input: string) => camelcase(input);
+export const camelCaseString = (input: string) => camelcase(input);
+
+export const decamelizeString = decamelize;
+
+export const hiphenizeString = hyphenize;

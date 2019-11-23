@@ -1,6 +1,6 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
-import { listIncludes, camelCase } from '../../tools';
+import { listIncludes, camelCaseString } from '../../tools';
 import { ConfigKeys } from '../../enums';
 import { IPageConfig } from '../../models';
 
@@ -15,7 +15,7 @@ export default class ComponentCommand extends BaseCommand {
     {
       name: 'name',
       description: 'name of the component',
-      parse: camelCase,
+      parse: camelCaseString,
     },
   ];
 
@@ -40,7 +40,7 @@ export default class ComponentCommand extends BaseCommand {
             return NAME_PROMPT_MSG;
           }
 
-          const hoc = camelCase(value);
+          const hoc = camelCaseString(value);
 
           if (listIncludes(availableComponents, hoc)) {
             return `${value} already exists. Please enter the name that does not exist`;
@@ -49,7 +49,7 @@ export default class ComponentCommand extends BaseCommand {
           return true;
         },
         when: !args.name || listIncludes(availableComponents, args.name),
-        filter: (input: string) => camelCase(input),
+        filter: (input: string) => camelCaseString(input),
       },
       {
         name: 'pageSpecificComponent',
@@ -70,13 +70,13 @@ export default class ComponentCommand extends BaseCommand {
 
     componentName = responses.componentName || componentName;
 
-    this.fs.copyTpl(this.templatePath('context/_index.js'), this.destinationPath(`src/contexts/${componentName}.tsx`), {
+    this.fs.copyTpl(this.templatePath('context/_index.js'), this.rootDestinationPath(`src/contexts/${componentName}.tsx`), {
       componentName,
     });
 
     this.store.set(ConfigKeys.Contexts, [...this.store.get(ConfigKeys.Contexts), componentName]);
 
-    const contextPath = this.destinationPath('src/contexts/index.ts');
+    const contextPath = this.rootDestinationPath('src/contexts/index.ts');
 
     // const replatePattern = '\/* NEW_CONTEXT_IMPORT *\/';
 
