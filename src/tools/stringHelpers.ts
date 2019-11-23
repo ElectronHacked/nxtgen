@@ -1,5 +1,6 @@
 import camelcase from 'camelcase';
 import decamelize = require('decamelize');
+const replaceString = require('replace-string');
 const hyphenize = require('hyphenize');
 
 /**
@@ -24,10 +25,20 @@ export const ensureItEndsWith = (value: string, suffix: string) => {
     : `${camelcase(value, { pascalCase: true })}${suffix}`;
 };
 
-export const pascalCase = (input: string) => camelcase(input, { pascalCase: true });
+export const pascalCaseName = (input: string) => camelcase(input, { pascalCase: true });
 
 export const camelCaseString = (input: string) => camelcase(input);
 
 export const decamelizeString = decamelize;
 
 export const hiphenizeString = hyphenize;
+
+export const getRelativePathStringFrom = (input: string, from: string) => {
+  let _input: string[] | string = input.split(from);
+  
+  if (Array.isArray(_input)) {
+    return replaceString(_input[1], '\\', '/');
+  }
+
+  throw 'Invalid path provided';
+};

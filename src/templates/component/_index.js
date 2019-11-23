@@ -5,7 +5,7 @@ interface IProps {};
 
 export const <%= componentName %>: FC<IProps> = () => (
   <div className="<%= className %>">
-    <%= componentName %> componentName
+    <%= componentName %> component
   </div>
 );
 

@@ -28,7 +28,7 @@ export default class ContextCommand extends BaseCommand {
 
     const availableContexts: string[] = this.store.get(ConfigKeys.Contexts);
 
-    const NAME_PROMPT_MSG = 'Please enter name of the context'; 
+    const NAME_PROMPT_MSG = 'Please enter name of the context';
 
     const responses = await this.inquirer.prompt([
       {
@@ -55,7 +55,7 @@ export default class ContextCommand extends BaseCommand {
 
     contextName = responses.contextName || contextName;
 
-    this.fs.copyTpl(this.templatePath('context/_index.js'), this.rootDestinationPath(`src/contexts/${contextName}.tsx`), {
+    this.fs.copyTpl(this.templatePath('context/_index.js'), this.sourceDestinationPath(`contexts/${contextName}.tsx`), {
       contextName,
     });
 

@@ -1,5 +1,5 @@
 import { flags } from '@oclif/command';
-import { listIncludes, pascalCase, camelCaseString } from '../../tools';
+import { listIncludes, pascalCaseName, camelCaseString } from '../../tools';
 import BaseCommand from '../../base';
 import { ConfigKeys } from '../../enums';
 
@@ -14,7 +14,7 @@ export default class EnumCommand extends BaseCommand {
     {
       name: 'name',
       description: 'name of the enum',
-      parse: pascalCase,
+      parse: pascalCaseName,
     },
   ];
 
@@ -37,7 +37,7 @@ export default class EnumCommand extends BaseCommand {
             return NAME_PROMPT_MSG;
           }
 
-          const hoc = pascalCase(value);
+          const hoc = pascalCaseName(value);
 
           if (listIncludes(availableHocs, hoc)) {
             return `${value} already exists. Please enter the name that does not exist`;
@@ -46,7 +46,7 @@ export default class EnumCommand extends BaseCommand {
           return true;
         },
         when: !args.name || listIncludes(availableHocs, args.name),
-        filter: (input: string) => pascalCase(input),
+        filter: (input: string) => pascalCaseName(input),
       },
     ]);
 
@@ -54,13 +54,13 @@ export default class EnumCommand extends BaseCommand {
 
     const nameToCamelCase = camelCaseString(enumName);
 
-    this.fs.copyTpl(this.templatePath('enum/_index.js'), this.rootDestinationPath(`src/enums/${nameToCamelCase}.tsx`), {
+    this.fs.copyTpl(this.templatePath('enum/_index.js'), this.sourceDestinationPath(`enums/${nameToCamelCase}.tsx`), {
       enumName,
     });
 
     this.store.set(ConfigKeys.Enums, [...this.store.get(ConfigKeys.Enums), enumName]);
 
-    const enumsPath = this.rootDestinationPath('src/enums/index.ts');
+    const enumsPath = this.sourceDestinationPath('enums/index.ts');
 
     // update enums/index.ts to add the new namespace to the list
     this.fs.copy(enumsPath, enumsPath, {

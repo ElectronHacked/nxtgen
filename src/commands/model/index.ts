@@ -1,9 +1,9 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
 import { ConfigKeys } from '../../enums';
-import { pascalCase, camelCaseString, listIncludes } from '../../tools';
+import { pascalCaseName, camelCaseString, listIncludes } from '../../tools';
 
-const ensureTheNameConforms = (input: string) => `I${pascalCase(input)}`;
+const ensureTheNameConforms = (input: string) => `I${pascalCaseName(input)}`;
 
 export default class ModelCommand extends BaseCommand {
   static description = 'adds a new model/interface';
@@ -55,13 +55,13 @@ export default class ModelCommand extends BaseCommand {
     const interfaceName = ensureTheNameConforms(modelName);
     const fileName = camelCaseString(modelName);
 
-    this.fs.copyTpl(this.templatePath('model/_index.js'), this.rootDestinationPath(`src/models/${fileName}.d.ts`), {
+    this.fs.copyTpl(this.templatePath('model/_index.js'), this.sourceDestinationPath(`models/${fileName}.d.ts`), {
       interfaceName,
     });
 
     this.store.set(ConfigKeys.Models, [...this.store.get(ConfigKeys.Models), interfaceName]);
 
-    const modelsPath = this.rootDestinationPath('src/models/index.d.ts');
+    const modelsPath = this.sourceDestinationPath('models/index.d.ts');
 
     // update models/index.ts to add the new namespace to the list
     this.fs.copy(modelsPath, modelsPath, {

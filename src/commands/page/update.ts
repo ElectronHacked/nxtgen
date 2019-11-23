@@ -10,7 +10,7 @@ const fuzzy = require('fuzzy');
 import _ = require('lodash');
 import { ICON_NAMES } from '../../constants';
 
-export default class PageCommand extends BaseCommand {
+export default class UpdatePageCommand extends BaseCommand {
   static description = 'adds a new page';
 
   static flags = {
@@ -29,7 +29,7 @@ export default class PageCommand extends BaseCommand {
   ];
 
   async run() {
-    const { args, flags } = this.parse(PageCommand);
+    const { args, flags } = this.parse(UpdatePageCommand);
 
     let { name: pageName } = args;
     let { nested, conceal, icon = '', title = '' } = flags;
@@ -177,8 +177,8 @@ export default class PageCommand extends BaseCommand {
     // Update the config file with the new page
     const newPage: IPageConfig = {
       name: pageName,
-      path: pagePath
-    }
+      path: pagePath,
+    };
 
     this.store.set(ConfigKeys.Pages, _.sortBy([...availablePages, newPage], 'name'));
 

@@ -52,11 +52,11 @@ export default class HocCommand extends BaseCommand {
 
     hocName = responses.responses || hocName;
 
-    this.fs.copyTpl(this.templatePath('hoc/_index.js'), this.rootDestinationPath(`src/hocs/${hocName}.tsx`), { hocName });
+    this.fs.copyTpl(this.templatePath('hoc/_index.js'), this.sourceDestinationPath(`hocs/${hocName}.tsx`), { hocName });
 
     this.store.set(ConfigKeys.Hocs, [...this.store.get(ConfigKeys.Hocs), hocName]);
 
-    const hocsPath = this.rootDestinationPath('src/hocs/index.ts');
+    const hocsPath = this.sourceDestinationPath('hocs/index.ts');
 
     // update hocs/index.ts to add the new namespace to the list
     this.fs.copy(hocsPath, hocsPath, {
