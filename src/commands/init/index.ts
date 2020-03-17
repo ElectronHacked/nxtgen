@@ -6,7 +6,7 @@ import { PREPROCESSOR, WEB_TRACKING } from '../../config';
 import BaseCommand from '../../base';
 
 export default class InitCommand extends BaseCommand {
-  static description = 'generates a new project';
+  static description = 'generates a new project hahaha';
 
   static flags = {
     help: flags.help({ char: 'h' }),

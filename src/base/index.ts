@@ -107,7 +107,7 @@ abstract class BaseCommand extends Command {
    * @param  {...String} path
    * @return {String}    joined path
    */
-  dirPath(targetPath: string) {
+  dirPath(targetPath: string): string {
     let filepath = path.resolve(__dirname, `../templates/${targetPath}`);
 
     if (!path.isAbsolute(filepath)) {
@@ -137,7 +137,7 @@ abstract class BaseCommand extends Command {
    * @param  {...String} path
    * @return {String}    joined path
    */
-  sourceDestinationPath(...args: string[]) {
+  sourceDestinationPath(...args: string[]): string {
     let filepath = `src/${path.join.apply(path, args)}`;
 
     if (!path.isAbsolute(filepath)) {
@@ -152,7 +152,7 @@ abstract class BaseCommand extends Command {
    * @param  {...String} path
    * @return {String}    joined path
    */
-  sourcePath(destination: string) {
+  sourcePath(destination: string): string {
     return path.resolve(`./src/${destination}`);
   }
 
