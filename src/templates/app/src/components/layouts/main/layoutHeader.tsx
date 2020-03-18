@@ -41,7 +41,7 @@ const LayoutHeader = () => {
             placement="bottomRight"
             className="dropdown"
             overlay={
-              <Menu className="overlay" style={{ top: 5 }}>
+              <Menu className="overlay" >
                 {loginInfo && (
                   <Menu.Item className="account-dropdown-item" key="profile">
                     <Link href={DASHBOARD_PAGE_URL}>

@@ -6,6 +6,8 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+const port = parseInt(process.env.PORT, 10) || 3000
+
 const i18nextMiddleware = require('i18next-express-middleware');
 const Backend = require('i18next-node-fs-backend');
 const { i18nInstance } = require('./i18n');
@@ -19,33 +21,7 @@ i18nInstance
     {
       fallbackLng: 'en',
       preload: ['en'], // preload all langages
-      ns: [
-        'common',
-        'home',
-        'about',
-        'details',
-        'create',
-        'account',
-        'forgot-password',
-        'reset-passsword',
-        'teams',
-        'permissions',
-        'notifications',
-        'service-hooks',
-        'dashboards',
-        'project-configuration',
-        'team-configuration',
-        'git-hub-connections',
-        'repositories',
-        'cross-repo-policies',
-        'agent-pools',
-        'parallel-jobs',
-        'test-management',
-        'release-retention',
-        'service-connections',
-        'xaml-build-services',
-        'retention' /* new-i18n-namespace-here */,
-      ],
+      ns: ['common'],
       backend: {
         loadPath: path.join(__dirname, '/static/locales/{{lng}}/{{ns}}.json'),
         addPath: path.join(__dirname, '/static/locales/{{lng}}/{{ns}}.missing.json'),
@@ -70,9 +46,9 @@ i18nInstance
         server.get('*', (req, res) => handle(req, res));
 
         // note: we use custom port to prevent conflicts on test server
-        server.listen(3010, err => {
-          if (err) throw err;
-          console.log('> Ready on http://localhost:3010');
+        server.listen(port, err => {
+          if (err) throw err
+          console.log(`> Ready on http://localhost:${port}`)
         });
       });
     }
