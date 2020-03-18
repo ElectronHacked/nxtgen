@@ -11,7 +11,7 @@ import { getFlagSetters } from '../utils/flagsSetters';
 const <%= stateName %>Provider: FC<PropsWithChildren<any>> = ({ children }) => {
   const [state, dispatch] = useReducer(<%= stateNameCamelCase %>Reducer, <%= stateNameCaps %>_CONTEXT_INITIAL_STATE);
 
-  /* NEW_ACTION_GOES_HERE */
+  /* NEW_ACTION_DECLARATION_GOES_HERE */
 
   return (
     <<%= stateName %>StateContext.Provider value={state}>
@@ -28,6 +28,7 @@ function use<%= stateName %>State() {
   if (context === undefined) {
     throw new Error('use<%= stateName %>State must be used within a <%= stateName %>Provider');
   }
+
   return context;
 }
 
