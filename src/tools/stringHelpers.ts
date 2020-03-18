@@ -1,5 +1,6 @@
 import camelcase from 'camelcase';
 import decamelize = require('decamelize');
+const dashify = require('dashify');
 const replaceString = require('replace-string');
 const hyphenize = require('hyphenize');
 
@@ -35,10 +36,22 @@ export const hiphenizeString = hyphenize;
 
 export const getRelativePathStringFrom = (input: string, from: string) => {
   let _input: string[] | string = input.split(from);
-  
+
   if (Array.isArray(_input)) {
     return replaceString(_input[1], '\\', '/');
   }
 
   throw 'Invalid path provided';
 };
+
+export const dashifyString = (value: string, delimiter: '-' | '_' = '-') => {
+  let dashified = dashify(value, { condense: true });
+
+  if (delimiter === '_') {
+    dashified = dashified.replace(/-/g, '_');
+  }
+
+  return dashified;
+};
+
+export const regionnify = (content: string, region: string) => `//#region ${region}\n${content}\n//#endregion\n`;

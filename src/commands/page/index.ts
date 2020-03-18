@@ -3,9 +3,8 @@ import BaseCommand from '../../base';
 import chalk = require('chalk');
 const humanizeString = require('humanize-string');
 const mkdirp = require('mkdirp');
-import { listIncludes, pascalCaseName, hiphenizeString } from '../../tools';
-import { ConfigKeys } from '../../enums';
-import { IPageConfig, IRoute } from '../../models';
+import { listIncludes, pascalCaseName, hiphenizeString, dashifyString } from '../../tools';
+import { IRoute } from '../../models';
 const fuzzy = require('fuzzy');
 import _ = require('lodash');
 import { ICON_NAMES } from '../../constants';
@@ -15,7 +14,6 @@ export default class PageCommand extends BaseCommand {
 
   static flags = {
     help: flags.help({ char: 'h' }),
-    nested: flags.boolean({ char: 'n', description: 'whether the page is nested' }),
     conceal: flags.boolean({ char: 'c', description: 'do not show a link to this page' }),
     title: flags.string({ char: 't', description: 'page title' }),
     icon: flags.string({ char: 'i', description: 'icon for this page' }),
@@ -32,16 +30,11 @@ export default class PageCommand extends BaseCommand {
     const { args, flags } = this.parse(PageCommand);
 
     let { name: pageName } = args;
-    let { nested, conceal, icon = '', title = '' } = flags;
-
-    const availablePages = this.store.get(ConfigKeys.Pages) as IPageConfig[];
-
-    const pagePaths = availablePages.map(({ path }) => path);
+    let { conceal, icon = '', title = '' } = flags;
 
     const NAME_PROMPT_MSG = 'Please enter name of the page';
 
     const shouldPromptForName = !pageName;
-    const shouldPromptForNested = !pageName;
     const shouldPromptForConceal = !pageName;
     const shouldPromptForTitle = !title || !pageName;
     const shouldPromptForIcon = (icon && !listIncludes(ICON_NAMES, icon)) || !icon;
@@ -81,7 +74,7 @@ export default class PageCommand extends BaseCommand {
           },
           {
             name: 'pageIcon',
-            message: 'Select the page icon - https://ant.design/components/icon',
+            message: 'Select the page icon - https://3x.ant.design/components/icon/',
             type: 'autocomplete',
             source: this.searchIcons,
             when: shouldPromptForIcon,
@@ -94,115 +87,78 @@ export default class PageCommand extends BaseCommand {
             when: shouldPromptForConceal,
           },
           {
-            name: 'isNestedPage',
-            message: 'Is this a nested page?',
-            type: 'confirm',
-            default: false,
-            when: shouldPromptForNested,
-          },
-          {
-            when(response) {
-              return response.isNestedPage && !!availablePages.length;
-            },
-            type: 'autocomplete',
-            name: 'parentPage',
-            message: 'Select the parent page',
-            source: (_answers: any, input: string) => {
-              input = input || '';
-              return new Promise(function(resolve) {
-                setTimeout(function() {
-                  var fuzzyResult = fuzzy.filter(input, pagePaths);
-                  resolve(
-                    fuzzyResult.map(function(el: any) {
-                      return el.original;
-                    })
-                  );
-                }, _.random(30, 500));
-              });
-            },
+            type: 'fuzzypath',
+            itemType: 'directory',
+            name: 'pageStorage',
+            message: 'Select a target directory for your page',
+            rootPath: this.sourceDestinationPath('pages'),
+            suggestOnly: false,
           },
         ]);
       });
 
-    if (responses.isNestedPage && !availablePages.length) {
-      this.log(
-        `Found ${chalk.red.bold(
-          0
-        )} pages. This page can't be nested as a result. Please make sure that you have pages added or that your ${chalk.magenta.bold.italic(
-          'config'
-        )} file is valid`
-      );
-    }
-
-    const orifinalPageName = pageName;
+    const originalPageName = pageName;
 
     pageName = hiphenizeString(pageName);
 
-    const { isNestedPage, parentPage, pageTitle, isHiddenPageLink, pageIcon } = responses;
+    const { pageStorage, pageTitle, isHiddenPageLink, pageIcon } = responses;
 
     title = shouldPromptForTitle ? pageTitle : title;
     conceal = shouldPromptForConceal ? isHiddenPageLink : conceal;
     icon = shouldPromptForIcon ? pageIcon : icon;
-    nested = shouldPromptForNested ? isNestedPage : nested;
-
-    const isNested = args.name ? flags.nested : isNestedPage;
-
-    const pagePath = isNested ? `${parentPage}/${pageName}` : pageName;
 
     const className = `${pageName}-page`;
 
-    const componentName = pascalCaseName(orifinalPageName);
+    const relativePath = `${pageStorage}/${originalPageName}`.split('pages')[1].replace(/\\/g, '/');
 
-    const pagePageWithRoot = `pages/${pagePath}`;
+    const componentName = pascalCaseName(originalPageName);
 
-    // // create folder project
-    mkdirp(pagePageWithRoot);
+    // // // create folder project
+    // mkdirp(`${pageStorage}/${pageName}`);
 
     // copy page into the pages folder
-    this.fs.copyTpl(this.templatePath('page/_index.js'), this.sourceDestinationPath(`${pagePageWithRoot}/index.tsx`), {
+    this.fs.copyTpl(this.templatePath('page/_index.js'), `${pageStorage}/${pageName}/index.tsx`, {
       componentName,
       title,
       className,
     });
 
     // // copy styles.scss
-    this.fs.copyTpl(
-      this.templatePath('page/_styles.scss'),
-      this.sourceDestinationPath(`${pagePageWithRoot}/styles.scss`),
-      {
-        className,
-      }
-    );
+    this.fs.copyTpl(this.templatePath('page/_styles.scss'), `${pageStorage}/${pageName}/styles.scss`, {
+      className,
+    });
 
-    // Update the config file with the new page
-    const newPage: IPageConfig = {
-      name: pageName,
-      path: pagePath
-    }
+    const PAGE_URL_NAME = `${dashifyString(pageName, '_')}_URL`.toUpperCase();
+    const PAGE_URL_EXPORT_DECLARATION = `export const ${PAGE_URL_NAME} = '${relativePath}';`;
 
-    this.store.set(ConfigKeys.Pages, _.sortBy([...availablePages, newPage], 'name'));
+    const PAGE_ROUTE_OBJECT = `{
+      name: ${PAGE_URL_NAME},
+      linkTo: ${PAGE_URL_NAME},
+      hide: ${conceal},
+      icon: '${icon}',
+      displayName: '${title}',
+      permissionName: '',
+    },`;
 
-    const pageRoute: IRoute = {
-      name: pagePath,
-      linkTo: `/${pagePath}`,
-      hide: conceal,
-      icon,
-      displayName: title,
-    };
+    const ROUTES_FILE_PATH = this.sourceDestinationPath('routes');
 
-    const routePath = this.sourceDestinationPath('routes/routes.json');
+    this.fs.copy(ROUTES_FILE_PATH, ROUTES_FILE_PATH, {
+      process(content) {
+        const regEx = new RegExp(/\/\* NEW_PAGE_DECLARATION_GOES_HERE \*\//, 'g');
+        const newContent = content
+          .toString()
+          .replace(regEx, `${PAGE_URL_EXPORT_DECLARATION}\n\n/* NEW_PAGE_DECLARATION_GOES_HERE */\n`);
+        return newContent;
+      },
+    });
 
-    // // Now, update the route.json file with this page
-    let routes: IRoute[] = this.fs.readJSON(routePath);
-
-    if (nested) {
-      this.injectNestedPage(routes, pageRoute, parentPage);
-    } else {
-      routes.push(pageRoute);
-    }
-
-    // // Update the route.json file
-    this.fs.writeJSON(routePath, routes);
+    this.fs.copy(ROUTES_FILE_PATH, ROUTES_FILE_PATH, {
+      process(content) {
+        const regEx = new RegExp(/\/\* NEW_PAGE_LINK_GOES_HERE \*\//, 'g');
+        const newContent = content.toString().replace(regEx, `${PAGE_ROUTE_OBJECT}\n/* NEW_PAGE_LINK_GOES_HERE */`);
+        return newContent;
+      },
+    });
   }
 
   searchIcons(_answers: any, input: string) {
