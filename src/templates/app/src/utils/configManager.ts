@@ -1,13 +1,10 @@
 export interface IAppConfigManager {
   baseUrl?: string;
-  gaTrackingId?: string;
-  appInsightsInstrumentationKey?: string;
+  hubUrl?: string;
 }
 
 const devConfig: IAppConfigManager = {
-  baseUrl: 'http://base-url.com',
-  gaTrackingId: 'UA-xxxxxx-1',
-  appInsightsInstrumentationKey: '6fac26c0-b4f3-4c27-8d37-19c73bc9d684',
+  baseUrl: 'http://ethekwinibackend.boxfusion.co.za', // TODO: MAke this configurable
 };
 
 export default class ConfigManager {
@@ -15,14 +12,14 @@ export default class ConfigManager {
 
   constructor() {
     try {
-      this.config = process.env.NODE_ENV === 'production' ? (window as any).__APP_CONFIG__ : devConfig;
+      this.config = process.env.NODE_ENV === 'production' ? window['__APP_CONFIG__'] : devConfig;
     } catch (error) {
       this.config = devConfig;
     }
   }
   getConfig(): IAppConfigManager {
     try {
-      return process.env.NODE_ENV === 'production' ? (window as any).__APP_CONFIG__ : devConfig;
+      return process.env.NODE_ENV === 'production' ? window['__APP_CONFIG__'] : devConfig;
     } catch (error) {
       return devConfig;
     }

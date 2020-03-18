@@ -1,58 +1,66 @@
-import React, { useLayoutEffect } from 'react';
-import styled from 'styled-components';
-import { Page } from 'components';
-import { useDispatch } from 'react-redux';
-import { fetchPostsRequest, fetchPostsSuccess } from 'redux-store/posts/actions';
-import { useGet } from 'restful-react';
-import { Button } from 'antd';
+import React, { useState } from 'react';
+import './styles.scss';
+import { Collapse, Icon, Button } from 'antd';
+import { ExpandIconPosition } from 'antd/lib/collapse/Collapse';
+import { MainLayout } from 'components/layouts';
+import { useGlobal } from 'providers';
+import { withAuth } from 'hocs';
 
-const Heading = styled.h1`
-  color: red;
-  font-size: 30px;
+const { Panel } = Collapse;
+
+function callback(key) {
+  console.log(key);
+}
+
+const text = `
+  A dog is a type of domesticated animal.
+  Known for its loyalty and faithfulness,
+  it can be found as a welcome guest in many households across the world.
 `;
 
-const Loading = styled.h1`
-  color: red;
-  font-size: 30px;
-`;
+export const Home = () => {
+  const [expandIconPosition] = useState<ExpandIconPosition>('right');
+  const { fetchPosts, fetchPostsSuccess, isInProgress } = useGlobal();
 
-const Error = styled.h1`
-  color: red;
-  font-size: 30px;
-`;
-
-const Body = styled.div``;
-
-export default () => {
-  const dispatch = useDispatch();
-
-  const { data: randomDogImage, loading, error, refetch } = useGet({
-    path: 'breeds/image/random',
-  });
-
-  useLayoutEffect(() => {
-    dispatch(fetchPostsRequest());
-
-    setTimeout(() => {
-      dispatch(fetchPostsSuccess());
-    }, 3000);
-  });
+  const genExtra = () => {
+    if (expandIconPosition) {
+      return null;
+    }
+    return (
+      <Icon
+        type="setting"
+        onClick={event => {
+          // If you don't want click extra trigger collapse, you can prevent this:
+          event.stopPropagation();
+        }}
+      />
+    );
+  };
 
   return (
-    <Page title="Dashboard">
-      <Heading>This is the dashboard for unnext boilerplate</Heading>
-      <Body>
-        <Button onClick={() => refetch()} loading={loading} size="large" type="primary">
-          Get a good boye!
+    <MainLayout title="Home" description="This is the home page">
+      <div className="home-page">
+        <Button onClick={fetchPosts} type="primary" loading={isInProgress.fetchPosts}>
+          Fetch Posts
         </Button>
-        <div>
-          {loading && <Loading>Loading...</Loading>}
-          {error && <Error>Opps! Error loading a gif</Error>}
-          {randomDogImage && !loading && (
-            <img alt="Here's a good boye!" src={randomDogImage && randomDogImage.message} />
-          )}
-        </div>
-      </Body>
-    </Page>
+        <Button onClick={fetchPostsSuccess} type="danger" disabled={!isInProgress.fetchPosts}>
+          Cancel Fetch Posts Request
+        </Button>
+        <br />
+        <Collapse
+          defaultActiveKey={['1']}
+          onChange={callback}
+          expandIconPosition={expandIconPosition}
+          className="collapsible-sha-panel"
+        >
+          <Panel header="This is panel header 1" key="1" extra={genExtra()}>
+            <div>{text}</div>
+          </Panel>
+        </Collapse>
+      </div>
+    </MainLayout>
   );
 };
+
+export default withAuth(Home);
+// export default Home;

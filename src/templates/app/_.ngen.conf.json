@@ -1,40 +1,45 @@
 {
   "name": "{{projectName}}",
-  "preprocessor": "{{preprocessor}}",
-  "googleAnalytics": {{googleAnalytics}},
-  "applicationInsights": {{applicationInsights}},
-  "actions": [],
-  "pages": [
-    {
-      "name": "about",
-      "path": "about"
-    },
-    {
-      "name": "index",
-      "path": "index"
-    },
-  ],
   "components": [],
   "enums": [],
   "models": [],
   "hooks": [],
-  "apis": [],
   "hocs": [],
   "contexts": [],
-  "stores": [{
-    "name": "flags",
-    "actions": [
-      "setIsInProgressFlag",
-      "setSucceededFlag",
-      "setFailedFlag",
-      "setActionedFlag",
-      "resetSucceededFlag",
-      "resetFailedFlag",
-      "resetActionedFlag",
-      "resetAllFlag"
-    ]
-  }, {
-    "name": "route",
-    "actions": ["goingToRoute"]
-  }]
+  "providers": [
+    {
+      "name": "auth",
+      "actions": [
+        "checkAuthAction",
+        "loginUserAction",
+        "loginUserSuccessAction",
+        "loginUserErrorAction",
+        "logoutUserAction",
+        "logoutUserSuccessAction",
+        "logoutUserErrorAction",
+        "sendOtpAction",
+        "sendOtpSuccessAction",
+        "sendOtpErrorAction",
+        "verifyOtpAction",
+        "verifyOtpSuccessAction",
+        "verifyOtpErrorAction",
+        "resetPasswordAction",
+        "resetPasswordSuccessAction",
+        "resetPasswordErrorAction",
+        "toggleVerifyOtpModalVisibilityAction"
+      ]
+    },
+    {
+      "name": "global",
+      "actions": ["toggleHeaderVisibilityAction", "fetchPostsAction", "fetchPostsSuccessAction"]
+    },
+    {
+      "name": "route",
+      "actions": ["goingToRouteAction"]
+    },
+    {
+      "name": "ui",
+      "actions": ["setControlsSizeAction"]
+    }
+  ]
 }

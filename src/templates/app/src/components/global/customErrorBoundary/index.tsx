@@ -7,8 +7,8 @@ interface IProps {
   children: ReactNode;
 }
 
-const CustomErrorBoundary: FC<IProps> = ({ children }) => (
-  <ErrorBoundary FallbackComponent={CustomErrorBoundaryFallbackComponent}>{children}</ErrorBoundary>
-);
+export const CustomErrorBoundary: FC<IProps> = ({ children }) => {
+  return <ErrorBoundary FallbackComponent={CustomErrorBoundaryFallbackComponent}>{children}</ErrorBoundary>;
+};
 
 export default CustomErrorBoundary;

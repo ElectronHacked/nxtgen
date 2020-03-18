@@ -1,16 +1,6 @@
 {
-  "extends": [
-    "standard",
-    "plugin:react/recommended",
-    "prettier",
-    "prettier/react",
-    "prettier/standard"
-  ],
-  "plugins": [
-    "react",
-    "prettier",
-    "standard"
-  ],
+  "extends": ["standard", "plugin:react/recommended", "prettier", "prettier/react", "prettier/standard"],
+  "plugins": ["react", "prettier", "standard", "react-hooks"],
   "parserOptions": {
     "sourceType": "module",
     "ecmaFeatures": {
@@ -25,8 +15,8 @@
     "prettier/prettier": ["error", {
       "singleQuote": true
     }],
-    "no-param-reassign": ["error", {
-      "props": true
-    }]
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-param-reassign": "error"
   }
 }

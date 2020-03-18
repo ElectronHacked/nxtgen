@@ -6,17 +6,22 @@
       {
         "root": ["./src"],
         "alias": {
+          "api": "./src/api",
+          "hocs": "./src/hocs",
           "components": "./src/components",
-          "layouts": "./src/layouts",
-          "models": "./src/models",
-          "redux-store": "./src/redux-store",
+          "app-constants": "./src/app-constants",
+          "contexts": "./src/contexts",
+          "data": "./src/data",
+          "enums": "./src/enums",
+          "hooks": "./src/hooks",
+          "providers": "./src/providers",
           "routes": "./src/routes",
-          "styles": "./src/styles",
-          "utils": "./src/utils",
+          "styles": "./styles",
+          "useApis": "./src/useApis",
+          "utils": "./src/utils"
         }
       }
     ],
-    ["babel-plugin-styled-components"],
     [
       "import",
       {
