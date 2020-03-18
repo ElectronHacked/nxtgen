@@ -226,23 +226,21 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
+  const value = {
+    ...getFlagSetters(dispatch),
+    checkAuth,
+    loginUser,
+    logoutUser,
+    sendOtp,
+    verifyOtp,
+    resetPassword,
+    toggleVerifyOtpModalVisibility,
+    /* NEW_ACTION_GOES_HERE */
+  };
+
   return (
     <AuthStateContext.Provider value={state}>
-      <AuthActionsContext.Provider
-        value={{
-          ...getFlagSetters(dispatch),
-          checkAuth,
-          loginUser,
-          logoutUser,
-          sendOtp,
-          verifyOtp,
-          resetPassword,
-          toggleVerifyOtpModalVisibility,
-          /* NEW_ACTION_GOES_HERE */
-        }}
-      >
-        {children}
-      </AuthActionsContext.Provider>
+      <AuthActionsContext.Provider value={value}>{children}</AuthActionsContext.Provider>
     </AuthStateContext.Provider>
   );
 };

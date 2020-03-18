@@ -69,7 +69,7 @@ export default class HookCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_HOOK_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${hookName} from './${hookName}';\n/* NEW_HOOK_EXPORT_GOES_HERE */`);
+          .replace(regEx, `export { ${hookName} } from './${hookName}';\n/* NEW_HOOK_EXPORT_GOES_HERE */`);
         return newContent;
       },
     });

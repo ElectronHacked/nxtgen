@@ -64,7 +64,7 @@ export default class HocCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_HOC_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${hocName} from './${hocName}';\n/* NEW_HOC_EXPORT_GOES_HERE */`);
+          .replace(regEx, `export { ${hocName} } from './${hocName}';\n/* NEW_HOC_EXPORT_GOES_HERE */`);
         return newContent;
       },
     });

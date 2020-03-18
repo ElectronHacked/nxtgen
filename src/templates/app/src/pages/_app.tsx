@@ -44,13 +44,14 @@ export default class Main extends App<{}, {}, IState> {
 
   render() {
     const { Component, pageProps } = this.props;
+    const requestOptions = {
+      headers: this.state.headers,
+    };
 
     return (
       <RestfulProvider
         base={BASE_URL}
-        requestOptions={{
-          headers: this.state.headers,
-        }}
+        requestOptions={requestOptions}
       >
         <GlobalProvider>
           <CustomNProgress />

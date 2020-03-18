@@ -14,18 +14,18 @@ const GlobalProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
+  // The main reason I put the value here is that the package I use to copy templates, `copy-template-dir` when generating the code, causes
+  // Issues each time it sees double `{`. It expects that to be a template
+  const value = {
+    ...getFlagSetters(dispatch),
+    toggleHeaderVisibility,
+    fetchPosts,
+    fetchPostsSuccess /* NEW_ACTION_GOES_HERE */,
+  };
+
   return (
     <GlobalStateContext.Provider value={state}>
-      <GlobalActionsContext.Provider
-        value={{
-          ...getFlagSetters(dispatch),
-          toggleHeaderVisibility,
-          fetchPosts,
-          fetchPostsSuccess /* NEW_ACTION_GOES_HERE */,
-        }}
-      >
-        {children}
-      </GlobalActionsContext.Provider>
+      <GlobalActionsContext.Provider value={value}>{children}</GlobalActionsContext.Provider>
     </GlobalStateContext.Provider>
   );
 };

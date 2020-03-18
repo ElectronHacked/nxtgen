@@ -1,6 +1,6 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
-import { ensureItEndsWith, listIncludes } from '../../tools';
+import { ensureItEndsWith, listIncludes, camelCaseString } from '../../tools';
 import { ConfigKeys } from '../../enums';
 
 const CONTEXT_SUFFIX = 'Context';
@@ -54,10 +54,15 @@ export default class ContextCommand extends BaseCommand {
     ]);
 
     contextName = responses.contextName || contextName;
+    const contextNameCamelCase = camelCaseString(contextName);
 
-    this.fs.copyTpl(this.templatePath('context/_index.js'), this.sourceDestinationPath(`contexts/${contextName}.tsx`), {
-      contextName,
-    });
+    this.fs.copyTpl(
+      this.templatePath('context/_index.js'),
+      this.sourceDestinationPath(`contexts/${contextNameCamelCase}.tsx`),
+      {
+        contextName,
+      }
+    );
 
     this.store.set(ConfigKeys.Contexts, [...this.store.get(ConfigKeys.Contexts), contextName]);
 
@@ -71,7 +76,7 @@ export default class ContextCommand extends BaseCommand {
           .toString()
           .replace(
             regEx,
-            `export { default as ${contextName} from './${contextName}';\n/* NEW_CONTEXT_EXPORT_GOES_HERE */`
+            `export { ${contextName} } from './${contextNameCamelCase}';\n/* NEW_CONTEXT_EXPORT_GOES_HERE */`
           );
         return newContent;
       },

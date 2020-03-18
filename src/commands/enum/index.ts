@@ -68,10 +68,7 @@ export default class EnumCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_ENUM_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(
-            regEx,
-            `export { default as ${enumName} from './${nameToCamelCase}';\n/* NEW_ENUM_EXPORT_GOES_HERE */`
-          );
+          .replace(regEx, `export { ${enumName} } from './${nameToCamelCase}';\n/* NEW_ENUM_EXPORT_GOES_HERE */`);
         return newContent;
       },
     });

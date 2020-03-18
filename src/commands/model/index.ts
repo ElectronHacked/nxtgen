@@ -69,7 +69,7 @@ export default class ModelCommand extends BaseCommand {
         const regEx = new RegExp(/\/\* NEW_MODEL_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { ${interfaceName} from './${fileName}';\n/* NEW_MODEL_EXPORT_GOES_HERE */`);
+          .replace(regEx, `export { ${interfaceName} } from './${fileName}';\n/* NEW_MODEL_EXPORT_GOES_HERE */`);
         return newContent;
       },
     });
