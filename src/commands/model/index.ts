@@ -66,10 +66,10 @@ export default class ModelCommand extends BaseCommand {
     // update models/index.ts to add the new namespace to the list
     this.fs.copy(modelsPath, modelsPath, {
       process(content) {
-        const regEx = new RegExp(/\/\* NEW_INTERFACE_IMPORT \*\//, 'g');
+        const regEx = new RegExp(/\/\* NEW_MODEL_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { ${interfaceName} from './${fileName}';\n/* NEW_INTERFACE_IMPORT */`);
+          .replace(regEx, `export { ${interfaceName} from './${fileName}';\n/* NEW_MODEL_EXPORT_GOES_HERE */`);
         return newContent;
       },
     });

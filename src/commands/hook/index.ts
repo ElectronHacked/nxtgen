@@ -66,10 +66,10 @@ export default class HookCommand extends BaseCommand {
     // update hooks/index.ts to add the new namespace to the list
     this.fs.copy(hookPath, hookPath, {
       process(content) {
-        const regEx = new RegExp(/\/\* NEW_HOOK_IMPORT \*\//, 'g');
+        const regEx = new RegExp(/\/\* NEW_HOOK_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${hookName} from './${hookName}';\n/* NEW_HOOK_IMPORT */`);
+          .replace(regEx, `export { default as ${hookName} from './${hookName}';\n/* NEW_HOOK_EXPORT_GOES_HERE */`);
         return newContent;
       },
     });

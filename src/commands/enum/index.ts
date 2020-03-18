@@ -65,10 +65,13 @@ export default class EnumCommand extends BaseCommand {
     // update enums/index.ts to add the new namespace to the list
     this.fs.copy(enumsPath, enumsPath, {
       process(content) {
-        const regEx = new RegExp(/\/\* NEW_ENUM_IMPORT \*\//, 'g');
+        const regEx = new RegExp(/\/\* NEW_ENUM_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${enumName} from './${nameToCamelCase}';\n/* NEW_ENUM_IMPORT */`);
+          .replace(
+            regEx,
+            `export { default as ${enumName} from './${nameToCamelCase}';\n/* NEW_ENUM_EXPORT_GOES_HERE */`
+          );
         return newContent;
       },
     });

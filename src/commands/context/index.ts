@@ -66,10 +66,13 @@ export default class ContextCommand extends BaseCommand {
     // update contexts/index.ts to add the new namespace to the list
     this.fs.copy(contextPath, contextPath, {
       process(content) {
-        const regEx = new RegExp(/\/\* NEW_CONTEXT_IMPORT \*\//, 'g');
+        const regEx = new RegExp(/\/\* NEW_CONTEXT_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${contextName} from './${contextName}';\n/* NEW_CONTEXT_IMPORT */`);
+          .replace(
+            regEx,
+            `export { default as ${contextName} from './${contextName}';\n/* NEW_CONTEXT_EXPORT_GOES_HERE */`
+          );
         return newContent;
       },
     });

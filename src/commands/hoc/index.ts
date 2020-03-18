@@ -61,10 +61,10 @@ export default class HocCommand extends BaseCommand {
     // update hocs/index.ts to add the new namespace to the list
     this.fs.copy(hocsPath, hocsPath, {
       process(content) {
-        const regEx = new RegExp(/\/\* NEW_HOC_IMPORT \*\//, 'g');
+        const regEx = new RegExp(/\/\* NEW_HOC_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
-          .replace(regEx, `export { default as ${hocName} from './${hocName}';\n/* NEW_HOC_IMPORT */`);
+          .replace(regEx, `export { default as ${hocName} from './${hocName}';\n/* NEW_HOC_EXPORT_GOES_HERE */`);
         return newContent;
       },
     });
