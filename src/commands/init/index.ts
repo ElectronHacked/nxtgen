@@ -2,7 +2,6 @@ import { flags } from '@oclif/command';
 import chalk = require('chalk');
 const mkdirp = require('mkdirp');
 import decamelize = require('decamelize');
-import { PREPROCESSOR, WEB_TRACKING } from '../../config';
 import BaseCommand from '../../base';
 
 export default class InitCommand extends BaseCommand {
@@ -10,22 +9,6 @@ export default class InitCommand extends BaseCommand {
 
   static flags = {
     help: flags.help({ char: 'h' }),
-
-    // flag with no value (-a, --authentication)
-    authentication: flags.boolean({ char: 'a', description: 'include authentication' }),
-
-    // flag with no value (-g, --googleAnalytics)
-    googleAnalytics: flags.boolean({ char: 'g', description: 'include Google Analytics' }),
-
-    // flag with no value (-a, --insights)
-    insights: flags.boolean({ char: 'i', description: 'include Application Insights' }),
-
-    // flag with no value (-f, --force)
-    force: flags.boolean({
-      char: 'f',
-      description:
-        'does not ask the user to confirm if they do not want any of authentication, googleAnalytics or insights',
-    }),
   };
 
   static args = [
@@ -38,11 +21,8 @@ export default class InitCommand extends BaseCommand {
 
   async run() {
     const { args, flags } = this.parse(InitCommand);
-    let { authentication, googleAnalytics, insights, force } = flags;
 
     let projectName: string = args.name;
-
-    const hasNotProvidedAnyBooleanFlag = !authentication && !googleAnalytics && !insights && !force;
 
     const responses = await this.inquirer.prompt([
       {
@@ -59,27 +39,6 @@ export default class InitCommand extends BaseCommand {
         when: !args.name,
         filter: (input: string) => (input ? decamelize(input.split(' ').join('-'), '-') : input),
       },
-      {
-        name: 'preprocessor',
-        type: 'list',
-        message: 'Please select the type of styling',
-        choices: Object.values(PREPROCESSOR),
-        default: 'styledComponents',
-      },
-      {
-        name: 'authentication',
-        type: 'confirm',
-        message: 'Do you want to include authentication?',
-        when: hasNotProvidedAnyBooleanFlag,
-        default: true,
-      },
-      {
-        name: 'tracking',
-        type: 'checkbox',
-        message: 'Select any tracking mechanism',
-        choices: Object.values(WEB_TRACKING),
-        when: hasNotProvidedAnyBooleanFlag,
-      },
     ]);
 
     if (!projectName) {
@@ -92,17 +51,11 @@ export default class InitCommand extends BaseCommand {
     // change project root to the new folder
     this.destinationRoot(this.rootDestinationPath(projectName));
 
-    if (hasNotProvidedAnyBooleanFlag) {
-      authentication = responses.authentication;
-      googleAnalytics = responses.tracking.includes(WEB_TRACKING.ga);
-      insights = responses.tracking.includes(WEB_TRACKING.ai);
-    }
-
     // Now, generate the project
     this.copyTemplateDir(
       this.templatePath('app'),
       this.rootDestinationPath('./'),
-      { projectName, preprocessor: responses.preprocessor, googleAnalytics, applicationInsights: insights },
+      { projectName },
       (err, createdFiles) => {
         if (err) throw err;
         createdFiles.forEach((filePath: string) => this.log(`${chalk.green('Created')} ${filePath}`));
