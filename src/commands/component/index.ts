@@ -1,9 +1,6 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
-import { listIncludes, camelCaseString, pascalCaseName, hiphenizeString, getRelativePathStringFrom } from '../../tools';
-import { ConfigKeys, ComponentStorageOptions } from '../../enums';
-const fuzzy = require('fuzzy');
-import _ = require('lodash');
+import { camelCaseString, pascalCaseName, hiphenizeString, getRelativePathStringFrom } from '../../tools';
 
 export default class ComponentCommand extends BaseCommand {
   static description = 'adds a new component';
@@ -35,12 +32,8 @@ export default class ComponentCommand extends BaseCommand {
 
     let { name: componentName } = args;
 
-    const availableComponents: string[] = this.store.get(ConfigKeys.Components);
-
-    const componentStorageOptions = Object.values(ComponentStorageOptions).map(v => v as string);
-
     const NAME_PROMPT_MSG = 'Please enter name of the component';
-    
+
     const responses = await this.inquirer.prompt([
       {
         name: 'componentPromptName',
@@ -50,16 +43,10 @@ export default class ComponentCommand extends BaseCommand {
           if (!value) {
             return NAME_PROMPT_MSG;
           }
-          
-          const hoc = camelCaseString(value);
-          
-          if (listIncludes(availableComponents, hoc)) {
-            return `${value} already exists. Please enter the name that does not exist`;
-          }
-          
+
           return true;
         },
-        when: !args.name || listIncludes(availableComponents, args.name),
+        when: !args.name,
         filter: (input: string) => camelCaseString(input),
       },
       {
@@ -72,24 +59,26 @@ export default class ComponentCommand extends BaseCommand {
         when: noComponentStorageDefined || countBooleanFlags > 1,
       },
     ]);
-    
+
     let {
       componentPromptName,
       componentStorage,
     }: { componentPromptName: string; componentStorage: string } = responses;
-    
+
     const componentAbsolutePath = getRelativePathStringFrom(componentStorage, 'components');
 
-    this.log(`componentAbsolutePath: ${componentAbsolutePath}`)
-
     if (componentAbsolutePath === '') {
-      componentStorage = `${componentStorage}/global`
+      componentStorage = `${componentStorage}/global`;
     }
 
     componentName = componentPromptName || componentName;
 
+    this.log(`componentStorage: ${componentStorage}`);
+
     const componentNameCamelCase = camelCaseString(componentName);
     const componentNamePascalCase = pascalCaseName(componentName);
+
+    const relativePath = `${componentStorage}/${componentNameCamelCase}`.split('components')[1].replace(/\\/g, '/');
 
     const className = hiphenizeString(componentName);
 
@@ -113,16 +102,15 @@ export default class ComponentCommand extends BaseCommand {
 
     const componentPath = this.sourceDestinationPath('components/index.ts');
 
-
     // update contexts/index.ts to add the new namespace to the list
     this.fs.copy(componentPath, componentPath, {
       process(content) {
-        const regEx = new RegExp(/\/\* NEW_COMPONENT_IMPORT \*\//, 'g');
+        const regEx = new RegExp(/\/\* NEW_COMPONENT_EXPORT_GOES_HERE \*\//, 'g');
         const newContent = content
           .toString()
           .replace(
             regEx,
-            `export { default as ${componentNamePascalCase} } from '.${componentAbsolutePath}';\n/* NEW_COMPONENT_IMPORT */`
+            `export { default as ${componentNamePascalCase} } from '.${relativePath}';\n/* NEW_COMPONENT_EXPORT_GOES_HERE */`
           );
         return newContent;
       },
