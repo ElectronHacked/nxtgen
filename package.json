@@ -24,6 +24,7 @@
     "hyphenize": "0.0.2",
     "inquirer": "^7.0.0",
     "inquirer-autocomplete-prompt": "^1.0.1",
+    "inquirer-checkbox-plus-prompt": "^1.0.1",
     "inquirer-fuzzy-path": "^2.1.0",
     "inquirer-prompt-suggest": "^0.1.0",
     "jsonfile": "^5.0.0",

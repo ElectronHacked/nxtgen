@@ -1,15 +1,13 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
 import { camelCaseString, pascalCaseName, hiphenizeString, getRelativePathStringFrom } from '../../tools';
+import { ConfigKeys } from '../../enums';
 
 export default class ComponentCommand extends BaseCommand {
   static description = 'adds a new component';
 
   static flags = {
     help: flags.help({ char: 'h' }),
-    global: flags.boolean({ char: 'g', description: 'whether a component is global' }),
-    componentNested: flags.boolean({ char: 'h', description: "whether it's nested within another component" }),
-    pageNested: flags.boolean({ char: 'h', description: "whether it's nested within a page" }),
   };
 
   static args = [
@@ -21,14 +19,7 @@ export default class ComponentCommand extends BaseCommand {
   ];
 
   async run() {
-    let {
-      args,
-      flags: { global, componentNested, pageNested },
-    } = this.parse(ComponentCommand);
-
-    const countBooleanFlags = [global, componentNested, pageNested].filter(f => f === true).length;
-
-    const noComponentStorageDefined = !countBooleanFlags;
+    let { args } = this.parse(ComponentCommand);
 
     let { name: componentName } = args;
 
@@ -56,7 +47,6 @@ export default class ComponentCommand extends BaseCommand {
         message: 'Select a target directory for your component',
         rootPath: this.sourceDestinationPath('components'),
         suggestOnly: false,
-        when: noComponentStorageDefined || countBooleanFlags > 1,
       },
     ]);
 

@@ -40,9 +40,9 @@ export default class ContextCommand extends BaseCommand {
             return NAME_PROMPT_MSG;
           }
 
-          const hoc = ensureNameConforms(value);
+          const context = ensureNameConforms(value);
 
-          if (listIncludes(availableContexts, hoc)) {
+          if (listIncludes(availableContexts, context)) {
             return `${value} already exists. Please enter the name that does not exist`;
           }
 

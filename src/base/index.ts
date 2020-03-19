@@ -13,6 +13,7 @@ const mkdirp = require('mkdirp');
 
 // Register inquirer plugins
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
+inquirer.registerPrompt('checkbox-plus', require('inquirer-checkbox-plus-prompt'));
 inquirer.registerPrompt('suggest', require('inquirer-prompt-suggest'));
 inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'))
 
@@ -104,6 +105,7 @@ abstract class BaseCommand extends Command {
 
     return filepath;
   }
+
   /**
    * Join a path to the source root.
    * @param  {...String} path
