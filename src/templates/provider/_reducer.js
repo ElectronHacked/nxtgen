@@ -13,7 +13,7 @@ export function <%= stateNameCamelCase %>Reducer(
   //#endregion
 
   switch (type) {
-    case <%= stateName %>ActionsEnums.DefaultAction:
+    case <%= stateName %>ActionEnums.DefaultAction:
     /* NEW_ACTION_ENUM_GOES_HERE */
       return {
         ...state,

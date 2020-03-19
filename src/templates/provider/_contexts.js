@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { IFlagsState, IFlagsSetters } from 'models';
 
 export type IFlagProgressFlags = '__DEFAULT__' /* NEW_IN_PROGRESS_FLAG_GOES_HERE */;
 export type IFlagSucceededFlags = '__DEFAULT__' /* NEW_SUCCEEDED_FLAG_GOES_HERE */;
@@ -10,7 +11,7 @@ export interface I<%= stateName %>StateContext
 
 }
 
-export interface IUiActionsContext
+export interface I<%= stateName %>ActionsContext
   extends IFlagsSetters <IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags> {
   
 }
@@ -19,6 +20,6 @@ export const <%= stateNameCaps %>_CONTEXT_INITIAL_STATE: I<%= stateName %>StateC
 
 };
 
-export const UiStateContext = createContext<I<%= stateName %>StateContext>(<%= stateNameCaps %>_CONTEXT_INITIAL_STATE);
+export const <%= stateName %>StateContext = createContext<I<%= stateName %>StateContext>(<%= stateNameCaps %>_CONTEXT_INITIAL_STATE);
 
-export const UiActionsContext = createContext<I<%= stateName %>ActionsContext>(undefined);
+export const <%= stateName %>ActionsContext = createContext<I<%= stateName %>ActionsContext>(undefined);

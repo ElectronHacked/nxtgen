@@ -1,10 +1,9 @@
 import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
 import { <%= stateNameCamelCase %>Reducer } from './reducer';
-import { setControlsSizeAction } from './actions';
 import { 
   <%= stateName %>ActionsContext,
   <%= stateName %>StateContext, 
-  <%= stateName %>_CONTEXT_INITIAL_STATE
+  <%= stateNameCaps %>_CONTEXT_INITIAL_STATE
 } from './contexts';
 import { getFlagSetters } from '../utils/flagsSetters';
 
