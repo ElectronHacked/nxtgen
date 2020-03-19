@@ -19,6 +19,6 @@ export const <%= stateNameCaps %>_CONTEXT_INITIAL_STATE: I<%= stateName %>StateC
 
 };
 
-export const UiStateContext = createContext<I<%= stateName %>StateContext>(UI_CONTEXT_INITIAL_STATE);
+export const UiStateContext = createContext<I<%= stateName %>StateContext>(<%= stateNameCaps %>_CONTEXT_INITIAL_STATE);
 
 export const UiActionsContext = createContext<I<%= stateName %>ActionsContext>(undefined);

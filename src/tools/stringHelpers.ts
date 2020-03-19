@@ -44,7 +44,7 @@ export const getRelativePathStringFrom = (input: string, from: string) => {
   throw 'Invalid path provided';
 };
 
-export const dashifyString = (value: string, delimiter: '-' | '_' = '-') => {
+export const dashifyString = (value: string, delimiter: '-' | '_' = '-'): string => {
   let dashified = dashify(value, { condense: true });
 
   if (delimiter === '_') {

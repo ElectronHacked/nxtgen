@@ -59,8 +59,6 @@ export default class ModelCommand extends BaseCommand {
       interfaceName,
     });
 
-    this.store.set(ConfigKeys.Models, [...this.store.get(ConfigKeys.Models), interfaceName]);
-
     const modelsPath = this.sourceDestinationPath('models/index.d.ts');
 
     // update models/index.ts to add the new namespace to the list
@@ -73,5 +71,8 @@ export default class ModelCommand extends BaseCommand {
         return newContent;
       },
     });
+
+    // Update the config file with this model
+    this.store.set(ConfigKeys.Models, [...this.store.get(ConfigKeys.Models), interfaceName]);
   }
 }

@@ -1,9 +1,7 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
+import { camelCaseString, pascalCaseName, dashifyString } from '../../tools';
 import { ConfigKeys } from '../../enums';
-import { pascalCaseName, camelCaseString, listIncludes } from '../../tools';
-
-const ensureTheNameConforms = (input: string) => `I${pascalCaseName(input)}`;
 
 export default class ProviderCommand extends BaseCommand {
   static description = 'adds a new provider';
@@ -16,62 +14,84 @@ export default class ProviderCommand extends BaseCommand {
     {
       name: 'name',
       description: 'name of the provider',
+      parse: camelCaseString,
     },
   ];
 
   async run() {
-    const { args } = this.parse(ProviderCommand);
+    let { args } = this.parse(ProviderCommand);
 
     let { name: providerName } = args;
 
-    const availableModels: string[] = this.store.get(ConfigKeys.Models);
-
-    const PROMPT_MSG = 'Please enter name of the provider';
+    const NAME_PROMPT_MSG = 'Please enter name of the new provider';
 
     const responses = await this.inquirer.prompt([
       {
-        name: 'provider',
+        name: 'providerName',
         type: 'input',
-        message: PROMPT_MSG,
+        message: NAME_PROMPT_MSG,
         validate: (value: string) => {
           if (!value) {
-            return PROMPT_MSG;
-          }
-
-          const hoc = ensureTheNameConforms(value);
-
-          if (listIncludes(availableModels, hoc)) {
-            return `${value} already exists. Please enter the name that does not exist`;
+            return NAME_PROMPT_MSG;
           }
 
           return true;
         },
-        when: !args.name || listIncludes(availableModels, args.name),
+        when: !providerName,
+        filter: (input: string) => camelCaseString(input),
       },
     ]);
 
-    providerName = responses.provider || providerName;
+    const PROVIDER_PATH = this.sourcePath('providers');
 
-    const interfaceName = ensureTheNameConforms(providerName);
-    const fileName = camelCaseString(providerName);
+    providerName = camelCaseString(providerName) || responses.providerName;
 
-    this.fs.copyTpl(this.templatePath('model/_index.js'), this.sourceDestinationPath(`models/${fileName}.d.ts`), {
-      interfaceName,
-    });
+    const stateName = pascalCaseName(providerName);
+    const STATE_NAME_CAPS = dashifyString(providerName, '_').toUpperCase();
 
-    this.store.set(ConfigKeys.Models, [...this.store.get(ConfigKeys.Models), interfaceName]);
+    // create folder project
+    this.mkdirp(`${PROVIDER_PATH}/${providerName}`);
 
-    const modelsPath = this.sourceDestinationPath('models/index.d.ts');
+    // copy actions into the provider folder
+    this.fs.copyTpl(
+      this.templatePath('provider/_actions.js'),
+      this.sourceDestinationPath(`${PROVIDER_PATH}/${providerName}/actions.ts`),
+      {
+        stateName,
+      }
+    );
 
-    // update models/index.ts to add the new namespace to the list
-    this.fs.copy(modelsPath, modelsPath, {
-      process(content) {
-        const regEx = new RegExp(/\/\* NEW_INTERFACE_IMPORT \*\//, 'g');
-        const newContent = content
-          .toString()
-          .replace(regEx, `export { ${interfaceName} from './${fileName}';\n/* NEW_INTERFACE_IMPORT */`);
-        return newContent;
-      },
-    });
+    // copy context into the provider folder
+    this.fs.copyTpl(
+      this.templatePath('provider/_context.js'),
+      this.sourceDestinationPath(`${PROVIDER_PATH}/${providerName}/_context.ts`),
+      {
+        stateName,
+        stateNameCaps: STATE_NAME_CAPS,
+      }
+    );
+
+    // copy reducer into the provider folder
+    this.fs.copyTpl(
+      this.templatePath('provider/_reducer.js'),
+      this.sourceDestinationPath(`${PROVIDER_PATH}/${providerName}/_reducer.ts`),
+      {
+        stateName,
+        stateNameCamelCase: providerName,
+      }
+    );
+
+    // copy reducer into the provider folder
+    this.fs.copyTpl(
+      this.templatePath('provider/_index.js'),
+      this.sourceDestinationPath(`${PROVIDER_PATH}/${providerName}/_index.tsx`),
+      {
+        stateName,
+        stateNameCaps: STATE_NAME_CAPS,
+        stateNameCamelCase: providerName,
+      }
+    );
+
+    this.store.set(ConfigKeys.Providers, [...this.store.get(ConfigKeys.Providers), providerName]);
   }
 }

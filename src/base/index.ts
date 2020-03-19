@@ -9,6 +9,7 @@ import Conf = require('conf');
 import chalk = require('chalk');
 import inquirer = require('inquirer');
 const copyTemplateDir = require('copy-template-dir');
+const mkdirp = require('mkdirp');
 
 // Register inquirer plugins
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
@@ -20,6 +21,7 @@ type CopyCallback = (err: Error, createdFiles: string[]) => void;
 abstract class BaseCommand extends Command {
   public store: Conf<any>;
   public inquirer: inquirer.Inquirer;
+  public mkdirp = mkdirp;
   public copyTemplateDir: (
     templateDir: string,
     targetDir: string,
