@@ -74,6 +74,19 @@ export default class ProviderCommand extends BaseCommand {
       stateNameCamelCase: providerName,
     });
 
+    const providersIndexPath = this.sourceDestinationPath('providers/index.ts');
+
+    // update contexts/index.ts to add the new namespace to the list
+    this.fs.copy(providersIndexPath, providersIndexPath, {
+      process(content) {
+        const regEx = new RegExp(/\/\* NEW_PROVIDER_EXPORT_GOES_HERE \*\//, 'g');
+        const newContent = content
+          .toString()
+          .replace(regEx, `export * from './${providerName}';\n/* NEW_PROVIDER_EXPORT_GOES_HERE */\n`);
+        return newContent;
+      },
+    });
+
     const providerConfig: IConfigStore = {
       name: providerName,
       actions: [],
