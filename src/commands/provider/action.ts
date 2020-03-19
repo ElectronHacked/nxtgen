@@ -3,6 +3,8 @@ import BaseCommand from '../../base';
 const fuzzy = require('fuzzy');
 import _ = require('lodash');
 import { newLineString, dashifyString, camelCaseString, pascalCaseName } from '../../tools';
+import { ConfigKeys } from '../../enums';
+import { IConfigStore } from './../../models/configSchema.d';
 
 interface IActionTemplates {
   contextDeclarations: string;
@@ -43,6 +45,10 @@ export default class PageCommand extends BaseCommand {
   async run() {
     const { args, flags } = this.parse(PageCommand);
 
+    const providers = this.store.get(ConfigKeys.Providers) as IConfigStore[];
+
+    const providerNames = providers && providers.map(({ name }) => name);
+
     let { name: actionName, provider } = args;
     let { success, error, inProgress, actioned } = flags;
 
@@ -68,6 +74,25 @@ export default class PageCommand extends BaseCommand {
           when: shouldPromptForName,
         },
         {
+          name: 'providerName',
+          message: 'Select the provider for this action',
+          type: 'autocomplete',
+          source: function(_answers: any, input: string) {
+            input = input || '';
+            return new Promise(function(resolve) {
+              setTimeout(function() {
+                var fuzzyResult = fuzzy.filter(input, providerNames);
+                resolve(
+                  fuzzyResult.map(function(el: any) {
+                    return el.original;
+                  })
+                );
+              }, _.random(30, 150));
+            });
+          },
+          when: !provider,
+        },
+        {
           name: 'shouldHaveFlags',
           type: 'confirm',
           message: 'Should this action have flags (isInProgress, error, success, actioned)?',
@@ -75,8 +100,9 @@ export default class PageCommand extends BaseCommand {
           when: hasNoFlag,
         },
       ])
-      .then(({ shouldHaveFlags, nameOfTheAction }) => {
+      .then(({ shouldHaveFlags, nameOfTheAction, providerName }) => {
         actionName = actionName || nameOfTheAction;
+        provider = provider || providerName;
 
         return this.inquirer.prompt([
           {
@@ -93,12 +119,14 @@ export default class PageCommand extends BaseCommand {
     actionName = camelCaseString(actionName);
 
     const actionNamePascal = pascalCaseName(actionName);
-    const actionNameUnderscore = dashifyString(actionName).toUpperCase();
+    const actionNameUnderscore = dashifyString(actionName, '_').toUpperCase();
 
-    success = success || responses.actionFlags.includes('success');
-    error = error || responses.actionFlags.includes('error');
-    inProgress = inProgress || responses.actionFlags.includes('inProgress');
-    actioned = actioned || responses.actionFlags.includes('actioned');
+    const actionFlags = responses.actionFlags || [];
+
+    success = success || actionFlags.includes('success');
+    error = error || actionFlags.includes('error');
+    inProgress = inProgress || actionFlags.includes('inProgress');
+    actioned = actioned || actionFlags.includes('actioned');
 
     const stateName = pascalCaseName(provider);
 
@@ -122,7 +150,7 @@ export default class PageCommand extends BaseCommand {
         flag
       );
 
-      ACTION_CONTEXT_DECLARATIONS += actionTemplates.actionCreatorsDeclarations;
+      ACTION_CONTEXT_DECLARATIONS += actionTemplates.contextDeclarations;
       ACTION_ENUM_DECLARATIONS += actionTemplates.enumDeclarations;
       ACTION_CREATORS_DECLARATIONS += actionTemplates.actionCreatorsDeclarations;
       ACTIONS_REDUCER_SWITCHES += actionTemplates.actionReducerSwitches;
@@ -131,42 +159,50 @@ export default class PageCommand extends BaseCommand {
       ACTIONS_INDEX_METHODS_EXPORTS += actionTemplates.actionIndexMethodExports;
     };
 
-    const actionsPath = this.sourceDestinationPath('providers/actions.ts');
-    const contextPath = this.sourceDestinationPath('providers/contexts.ts');
-    const indexPath = this.sourceDestinationPath('providers/index.ts');
-    const reducerPath = this.sourceDestinationPath('providers/reducer.ts');
+    const actionsPath = this.sourceDestinationPath(`providers/${provider}/actions.ts`);
+    const contextPath = this.sourceDestinationPath(`providers/${provider}/contexts.ts`);
+    const indexPath = this.sourceDestinationPath(`providers/${provider}/index.tsx`);
+    const reducerPath = this.sourceDestinationPath(`providers/${provider}/reducer.ts`);
 
     if (success || error || inProgress || actioned) {
       if (success) {
         updateActionTemplates('success');
 
         // IFlagSucceededFlags
-        this.replaceContent(contextPath, `${newLineString(actionName)}`, 'NEW_SUCCEEDED_FLAG_GOES_HERE');
+        this.replaceContent(contextPath, ` | ${newLineString(actionName)}`, 'NEW_SUCCEEDED_FLAG_GOES_HERE');
       }
 
       if (error) {
         updateActionTemplates('error');
 
         // IFlagErrorFlags
-        this.replaceContent(contextPath, `${newLineString(actionName)}`, 'NEW_ERROR_FLAG_GOES_HERE');
+        this.replaceContent(contextPath, ` | ${newLineString(actionName)}`, 'NEW_ERROR_FLAG_GOES_HERE');
       }
 
       if (inProgress) {
         updateActionTemplates('isInProgress');
 
         // IFlagProgressFlags
-        this.replaceContent(contextPath, `${newLineString(actionName)}`, 'NEW_IN_PROGRESS_FLAG_GOES_HERE');
+        this.replaceContent(contextPath, ` | ${newLineString(actionName)}`, 'NEW_IN_PROGRESS_FLAG_GOES_HERE');
       }
 
       if (actioned) {
         updateActionTemplates('actioned');
 
         // IFlagActionedFlags
-        this.replaceContent(contextPath, `${newLineString(actionName)}`, 'NEW_ACTIONED_FLAG_GOES_HERE');
+        this.replaceContent(contextPath, ` | ${newLineString(actionName)}`, 'NEW_ACTIONED_FLAG_GOES_HERE');
       }
     } else {
       updateActionTemplates('');
     }
+
+    this.log(`ACTION_CONTEXT_DECLARATIONS   : ${ACTION_CONTEXT_DECLARATIONS}\n\n\n`);
+    this.log(`ACTION_ENUM_DECLARATIONS   : ${ACTION_ENUM_DECLARATIONS}\n\n\n`);
+    this.log(`ACTION_CREATORS_DECLARATIONS   : ${ACTION_CREATORS_DECLARATIONS}\n\n\n`);
+    this.log(`ACTIONS_REDUCER_SWITCHES   : ${ACTIONS_REDUCER_SWITCHES}\n\n\n`);
+    this.log(`ACTIONS_INDEX_IMPORTS   : ${ACTIONS_INDEX_IMPORTS}\n\n\n`);
+    this.log(`ACTIONS_INDEX_METHODS_DECLARATIONS   : ${ACTIONS_INDEX_METHODS_DECLARATIONS}\n\n\n`);
+    this.log(`ACTIONS_INDEX_METHODS_EXPORTS   : ${ACTIONS_INDEX_METHODS_EXPORTS}\n\n\n`);
 
     // providers/contexts.ts
     this.replaceContent(contextPath, ACTION_CONTEXT_DECLARATIONS, 'NEW_ACTION_ACTION_DECLARATIO_GOES_HERE');
@@ -192,12 +228,12 @@ export default class PageCommand extends BaseCommand {
     stateName: string,
     flag: ActionFlagType
   ): IActionTemplates {
-    const enumValue = `${actionNamePascal}Success`;
     const flagPascalCase = pascalCaseName(flag);
+    const enumValue = `${actionNamePascal}${flagPascalCase}`;
     const flagToUpperWithUnderScorePrefix = flag.length ? `_${flag}`.toLowerCase() : '';
 
     return {
-      contextDeclarations: newLineString(`${actionName}Success: () => void;`),
+      contextDeclarations: newLineString(`${actionName}${flagPascalCase}: () => void;`),
       enumDeclarations: newLineString(`${enumValue} = '${actionNameUnderscore}${flagToUpperWithUnderScorePrefix}',`),
       actionCreatorsDeclarations: newLineString(`
       export const ${actionName}${flagPascalCase}Action = createAction<I${stateName}StateContext>(${enumName}.${enumValue}, () => ({}));`),
