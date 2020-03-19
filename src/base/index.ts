@@ -15,7 +15,7 @@ const mkdirp = require('mkdirp');
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
 inquirer.registerPrompt('checkbox-plus', require('inquirer-checkbox-plus-prompt'));
 inquirer.registerPrompt('suggest', require('inquirer-prompt-suggest'));
-inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'))
+inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 
 type CopyCallback = (err: Error, createdFiles: string[]) => void;
 
@@ -158,6 +158,24 @@ abstract class BaseCommand extends Command {
    */
   sourcePath(destination: string): string {
     return path.resolve(`./src/${destination}`);
+  }
+
+  /**
+   * Replaces a content a given file path
+   * @param path
+   * @param text
+   * @param pattern
+   */
+  replaceContent(path: string, text: string, pattern: string) {
+    const regexPatten = `\/* ${pattern} *\/`;
+
+    this.fs.copy(path, path, {
+      process(content) {
+        const regEx = new RegExp(regexPatten, 'g');
+        const newContent = content.toString().replace(regEx, `${text}\n${regexPatten}`);
+        return newContent;
+      },
+    });
   }
 
   /**

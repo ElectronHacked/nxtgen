@@ -131,25 +131,57 @@ export default class PageCommand extends BaseCommand {
       ACTIONS_INDEX_METHODS_EXPORTS += actionTemplates.actionIndexMethodExports;
     };
 
+    const actionsPath = this.sourceDestinationPath('providers/actions.ts');
+    const contextPath = this.sourceDestinationPath('providers/contexts.ts');
+    const indexPath = this.sourceDestinationPath('providers/index.ts');
+    const reducerPath = this.sourceDestinationPath('providers/reducer.ts');
+
     if (success || error || inProgress || actioned) {
       if (success) {
         updateActionTemplates('success');
+
+        // IFlagSucceededFlags
+        this.replaceContent(contextPath, `${newLineString(actionName)}`, 'NEW_SUCCEEDED_FLAG_GOES_HERE');
       }
 
       if (error) {
         updateActionTemplates('error');
+
+        // IFlagErrorFlags
+        this.replaceContent(contextPath, `${newLineString(actionName)}`, 'NEW_ERROR_FLAG_GOES_HERE');
       }
 
       if (inProgress) {
         updateActionTemplates('isInProgress');
+
+        // IFlagProgressFlags
+        this.replaceContent(contextPath, `${newLineString(actionName)}`, 'NEW_IN_PROGRESS_FLAG_GOES_HERE');
       }
 
       if (actioned) {
         updateActionTemplates('actioned');
+
+        // IFlagActionedFlags
+        this.replaceContent(contextPath, `${newLineString(actionName)}`, 'NEW_ACTIONED_FLAG_GOES_HERE');
       }
     } else {
       updateActionTemplates('');
     }
+
+    // providers/contexts.ts
+    this.replaceContent(contextPath, ACTION_CONTEXT_DECLARATIONS, 'NEW_ACTION_ACTION_DECLARATIO_GOES_HERE');
+
+    // providers/actions.ts
+    this.replaceContent(actionsPath, ACTION_ENUM_DECLARATIONS, 'NEW_ACTION_TYPE_GOES_HERE');
+    this.replaceContent(actionsPath, ACTION_CREATORS_DECLARATIONS, 'NEW_ACTION_GOES_HERE');
+
+    // providers/reducer.ts
+    this.replaceContent(reducerPath, ACTIONS_REDUCER_SWITCHES, 'NEW_ACTION_ENUM_GOES_HERE');
+
+    // providers/index.ts
+    this.replaceContent(indexPath, ACTIONS_INDEX_IMPORTS, 'NEW_IMPORT_GOES_HERE');
+    this.replaceContent(indexPath, ACTIONS_INDEX_METHODS_DECLARATIONS, 'NEW_ACTION_DECLARATION_GOES_HERE');
+    this.replaceContent(indexPath, ACTIONS_INDEX_METHODS_EXPORTS, 'NEW_ACTION_GOES_HERE');
   }
 
   getActionTemplates(
