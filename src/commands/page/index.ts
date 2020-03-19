@@ -1,8 +1,6 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
-import chalk = require('chalk');
 const humanizeString = require('humanize-string');
-const mkdirp = require('mkdirp');
 import { listIncludes, pascalCaseName, hiphenizeString, dashifyString } from '../../tools';
 import { IRoute } from '../../models';
 const fuzzy = require('fuzzy');

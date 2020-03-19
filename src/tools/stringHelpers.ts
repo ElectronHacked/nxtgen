@@ -55,3 +55,8 @@ export const dashifyString = (value: string, delimiter: '-' | '_' = '-'): string
 };
 
 export const regionnify = (content: string, region: string) => `//#region ${region}\n${content}\n//#endregion\n`;
+
+export const newLineString = (value: string, tab = true) => {
+  let modified = `${value}`;
+  return tab ? `${modified}\t` : modified;
+};

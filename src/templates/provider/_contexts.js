@@ -13,7 +13,7 @@ export interface I<%= stateName %>StateContext
 
 export interface I<%= stateName %>ActionsContext
   extends IFlagsSetters <IFlagProgressFlags, IFlagSucceededFlags, IFlagErrorFlags, IFlagActionedFlags> {
-  
+  /* NEW_ACTION_ACTION_DECLARATIO_GOES_HERE */
 }
 
 export const <%= stateNameCaps %>_CONTEXT_INITIAL_STATE: I<%= stateName %>StateContext = {

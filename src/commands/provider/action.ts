@@ -2,8 +2,21 @@ import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
 const fuzzy = require('fuzzy');
 import _ = require('lodash');
+import { newLineString, dashifyString, camelCaseString, pascalCaseName } from '../../tools';
+
+interface IActionTemplates {
+  contextDeclarations: string;
+  enumDeclarations: string;
+  actionCreatorsDeclarations: string;
+  actionReducerSwitches: string;
+  actionIndexImports: string;
+  actionIndexMethodDeclarations: string;
+  actionIndexMethodExports: string;
+}
 
 const ACTION_FLAGS = ['success', 'error', 'inProgress', 'actioned'];
+
+type ActionFlagType = 'success' | 'error' | 'isInProgress' | 'actioned' | '';
 
 export default class PageCommand extends BaseCommand {
   static description = 'adds a new action';
@@ -30,7 +43,7 @@ export default class PageCommand extends BaseCommand {
   async run() {
     const { args, flags } = this.parse(PageCommand);
 
-    let { name: actionName } = args;
+    let { name: actionName, provider } = args;
     let { success, error, inProgress, actioned } = flags;
 
     const hasNoFlag = !(success || error || inProgress || actioned);
@@ -77,23 +90,92 @@ export default class PageCommand extends BaseCommand {
         ]);
       });
 
+    actionName = camelCaseString(actionName);
+
+    const actionNamePascal = pascalCaseName(actionName);
+    const actionNameUnderscore = dashifyString(actionName).toUpperCase();
+
     success = success || responses.actionFlags.includes('success');
     error = error || responses.actionFlags.includes('error');
     inProgress = inProgress || responses.actionFlags.includes('inProgress');
     actioned = actioned || responses.actionFlags.includes('actioned');
 
+    const stateName = pascalCaseName(provider);
+
+    const enumName = `${stateName}ActionEnums`;
+
+    let ACTION_CONTEXT_DECLARATIONS = '';
+    let ACTION_ENUM_DECLARATIONS = '';
+    let ACTION_CREATORS_DECLARATIONS = '';
+    let ACTIONS_REDUCER_SWITCHES = '';
+    let ACTIONS_INDEX_IMPORTS = '';
+    let ACTIONS_INDEX_METHODS_DECLARATIONS = '';
+    let ACTIONS_INDEX_METHODS_EXPORTS = '';
+
+    const updateActionTemplates = (flag: ActionFlagType) => {
+      const actionTemplates = this.getActionTemplates(
+        actionName,
+        actionNamePascal,
+        actionNameUnderscore,
+        enumName,
+        stateName,
+        flag
+      );
+
+      ACTION_CONTEXT_DECLARATIONS += actionTemplates.actionCreatorsDeclarations;
+      ACTION_ENUM_DECLARATIONS += actionTemplates.enumDeclarations;
+      ACTION_CREATORS_DECLARATIONS += actionTemplates.actionCreatorsDeclarations;
+      ACTIONS_REDUCER_SWITCHES += actionTemplates.actionReducerSwitches;
+      ACTIONS_INDEX_IMPORTS += actionTemplates.actionIndexImports;
+      ACTIONS_INDEX_METHODS_DECLARATIONS += actionTemplates.actionIndexMethodDeclarations;
+      ACTIONS_INDEX_METHODS_EXPORTS += actionTemplates.actionIndexMethodExports;
+    };
+
     if (success || error || inProgress || actioned) {
       if (success) {
+        updateActionTemplates('success');
       }
-      if (success) {
+
+      if (error) {
+        updateActionTemplates('error');
       }
-      if (success) {
+
+      if (inProgress) {
+        updateActionTemplates('isInProgress');
       }
-      if (success) {
+
+      if (actioned) {
+        updateActionTemplates('actioned');
       }
-      if (success) {
-      }
+    } else {
+      updateActionTemplates('');
     }
+  }
+
+  getActionTemplates(
+    actionName: string,
+    actionNamePascal: string,
+    actionNameUnderscore: string,
+    enumName: string,
+    stateName: string,
+    flag: ActionFlagType
+  ): IActionTemplates {
+    const enumValue = `${actionNamePascal}Success`;
+    const flagPascalCase = pascalCaseName(flag);
+    const flagToUpperWithUnderScorePrefix = flag.length ? `_${flag}`.toLowerCase() : '';
+
+    return {
+      contextDeclarations: newLineString(`${actionName}Success: () => void;`),
+      enumDeclarations: newLineString(`${enumValue} = '${actionNameUnderscore}${flagToUpperWithUnderScorePrefix}',`),
+      actionCreatorsDeclarations: newLineString(`
+      export const ${actionName}${flagPascalCase}Action = createAction<I${stateName}StateContext>(${enumName}.${enumValue}, () => ({}));`),
+      actionReducerSwitches: newLineString(`case ${enumName}.${enumValue}:`),
+      actionIndexImports: newLineString(`${actionName}${flagPascalCase}Action,`),
+      actionIndexMethodDeclarations: newLineString(
+        `const ${actionName}${flagPascalCase} = () => { dispatch(${actionName}${flagPascalCase}Action()); };`
+      ),
+      actionIndexMethodExports: newLineString(`${actionName}${flagPascalCase},`),
+    };
   }
 
   searchProviders(_answers: any, input: string) {
