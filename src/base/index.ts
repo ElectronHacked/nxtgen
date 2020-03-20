@@ -9,6 +9,7 @@ import Conf = require('conf');
 import chalk = require('chalk');
 import inquirer = require('inquirer');
 const copyTemplateDir = require('copy-template-dir');
+const escapeStringRegexp = require('escape-string-regexp');
 const mkdirp = require('mkdirp');
 
 // Register inquirer plugins
@@ -160,20 +161,13 @@ abstract class BaseCommand extends Command {
     return path.resolve(`./src/${destination}`);
   }
 
-  /**
-   * Replaces a content a given file path
-   * @param path
-   * @param text
-   * @param pattern
-   */
   replaceContent(path: string, text: string, pattern: string) {
-    const regexPatten = `\/* ${pattern} *\/`;
-
     this.fs.copy(path, path, {
       process(content) {
-        const regEx = new RegExp(regexPatten, 'g');
-        const newContent = content.toString().replace(regEx, `${text}\n${regexPatten}`);
-        return newContent;
+        const regEx = new RegExp(escapeStringRegexp(pattern), 'g');
+        const newContent = content.toString().replace(regEx, text);
+
+        return `${newContent}\n/* ${pattern} */`;
       },
     });
   }
