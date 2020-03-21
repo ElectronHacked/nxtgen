@@ -81,5 +81,7 @@ export default class ContextCommand extends BaseCommand {
         return newContent;
       },
     });
+
+    this.logAffectedFiles();
   }
 }

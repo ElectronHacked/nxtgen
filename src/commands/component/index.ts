@@ -105,5 +105,7 @@ export default class ComponentCommand extends BaseCommand {
         return newContent;
       },
     });
+
+    this.logAffectedFiles();
   }
 }

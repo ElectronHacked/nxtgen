@@ -226,6 +226,8 @@ export default class PageCommand extends BaseCommand {
     this.log(`${chalk.red.bold('> Modified')}: ${indexPath}`);
     this.log(`${chalk.red.bold('> Modified')}: ${reducerPath}`);
     this.log(`${chalk.red.bold('> Modified')}: ${actionsPath}`);
+
+    this.logAffectedFiles();
   }
 
   getActionTemplates(

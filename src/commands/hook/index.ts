@@ -73,5 +73,7 @@ export default class HookCommand extends BaseCommand {
         return newContent;
       },
     });
+
+    this.logAffectedFiles();
   }
 }

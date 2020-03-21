@@ -93,5 +93,7 @@ export default class ProviderCommand extends BaseCommand {
     };
 
     this.store.set(ConfigKeys.Providers, [...this.store.get(ConfigKeys.Providers), providerConfig]);
+
+    this.logAffectedFiles();
   }
 }

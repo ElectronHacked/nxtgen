@@ -74,5 +74,7 @@ export default class ModelCommand extends BaseCommand {
 
     // Update the config file with this model
     this.store.set(ConfigKeys.Models, [...this.store.get(ConfigKeys.Models), interfaceName]);
+
+    this.logAffectedFiles();
   }
 }

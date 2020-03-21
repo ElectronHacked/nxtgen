@@ -68,5 +68,7 @@ export default class HocCommand extends BaseCommand {
         return newContent;
       },
     });
+
+    this.logAffectedFiles();
   }
 }

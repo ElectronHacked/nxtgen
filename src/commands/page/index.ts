@@ -157,6 +157,8 @@ export default class PageCommand extends BaseCommand {
         return newContent;
       },
     });
+
+    this.logAffectedFiles();
   }
 
   searchIcons(_answers: any, input: string) {

@@ -72,5 +72,7 @@ export default class EnumCommand extends BaseCommand {
         return newContent;
       },
     });
+
+    this.logAffectedFiles();
   }
 }

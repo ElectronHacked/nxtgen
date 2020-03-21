@@ -20,7 +20,7 @@ export default class InitCommand extends BaseCommand {
   ];
 
   async run() {
-    const { args, flags } = this.parse(InitCommand);
+    const { args } = this.parse(InitCommand);
 
     let projectName: string = args.name;
 
@@ -61,7 +61,5 @@ export default class InitCommand extends BaseCommand {
         createdFiles.forEach((filePath: string) => this.log(`${chalk.green('Created')} ${filePath}`));
       }
     );
-
-    this.log(`this.store.path: ${this.store.path}`);
   }
 }

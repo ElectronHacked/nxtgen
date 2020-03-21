@@ -8,6 +8,7 @@ import FileEditor = require('mem-fs-editor');
 import Conf = require('conf');
 import chalk = require('chalk');
 import inquirer = require('inquirer');
+import { FileCreationState } from '../enums';
 const copyTemplateDir = require('copy-template-dir');
 const escapeStringRegexp = require('escape-string-regexp');
 const mkdirp = require('mkdirp');
@@ -33,6 +34,8 @@ abstract class BaseCommand extends Command {
   readonly fs: FileEditor.Editor;
   private _destinationRoot: string;
   private _sourceRoot: string;
+  private sharedFs: memFs.Store;
+  private _sharedFsCopy: memFs.Store;
 
   constructor(argv: string[], config: IConfig) {
     super(argv, config);
@@ -41,7 +44,6 @@ abstract class BaseCommand extends Command {
     this._sourceRoot = '';
     this.copyTemplateDir = copyTemplateDir;
     this.inquirer = inquirer;
-
     this.store = new Conf({
       configName: '.ngen.conf',
       clearInvalidConfig: false, // The user might want to edit the config and when that happens, we do not want the user to lose all data. Rather throw an exception
@@ -49,6 +51,8 @@ abstract class BaseCommand extends Command {
     });
 
     const sharedFs = memFs.create();
+    this.sharedFs = sharedFs;
+    this._sharedFsCopy = sharedFs;
     this.fs = FileEditor.create(sharedFs);
 
     sharedFs.on('change', this._writeFiles.bind(this));
@@ -76,6 +80,24 @@ abstract class BaseCommand extends Command {
     }
 
     return this._destinationRoot || process.cwd();
+  }
+
+  logAffectedFiles() {
+    this.log();
+    this._sharedFsCopy.each(file => {
+      if (file.hasOwnProperty('isNew')) {
+        let state = FileCreationState.Created;
+        let chackColor = chalk.green;
+        const fileName = file.history[0];
+
+        if (!file.isNew) {
+          state = FileCreationState.Modified;
+          chackColor = chalk.yellow;
+        }
+
+        this.log(`${chackColor.bold(state)}: ${fileName}`);
+      }
+    });
   }
 
   /**
@@ -178,9 +200,12 @@ abstract class BaseCommand extends Command {
    */
   private _writeFiles() {
     if (this.fs) {
+      // Whenever a file shanges, we just store the those files in the copy of changed files for later logging
+      this._sharedFsCopy = this.sharedFs;
+
       this.fs.commit(err => {
         if (err) {
-          this.error(`Sorry, and ${chalk.red.bold('error')} occured and while persisting the data`);
+          this.error(`Sorry, an ${chalk.red.bold('error')} occured and while persisting the data`);
         }
       });
     }
