@@ -36,7 +36,6 @@ abstract class BaseCommand extends Command {
   private _destinationRoot: string;
   private _sourceRoot: string;
   private sharedFs: memFs.Store;
-  private _sharedFsCopy: memFs.Store;
 
   constructor(argv: string[], config: IConfig) {
     super(argv, config);
@@ -53,7 +52,6 @@ abstract class BaseCommand extends Command {
 
     const sharedFs = memFs.create();
     this.sharedFs = sharedFs;
-    this._sharedFsCopy = sharedFs;
     this.fs = FileEditor.create(sharedFs);
 
     sharedFs.on('change', this._writeFiles.bind(this));

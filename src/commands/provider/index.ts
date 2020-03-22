@@ -3,6 +3,8 @@ import BaseCommand from '../../base';
 import { camelCaseString, pascalCaseName, dashifyString } from '../../tools';
 import { ConfigKeys } from '../../enums';
 import { IConfigStore } from '../../models/configSchema';
+import { listIncludes } from '../../tools/arrayHelpters';
+import chalk = require('chalk');
 
 export default class ProviderCommand extends BaseCommand {
   static description = 'adds a new provider';
@@ -24,6 +26,8 @@ export default class ProviderCommand extends BaseCommand {
 
     let { name: providerName } = args;
 
+    const availableProviders = ((this.store.get(ConfigKeys.Providers) as IConfigStore[]) || []).map(({ name }) => name);
+
     const NAME_PROMPT_MSG = 'Please enter name of the new provider';
 
     const responses = await this.inquirer.prompt([
@@ -36,10 +40,17 @@ export default class ProviderCommand extends BaseCommand {
             return NAME_PROMPT_MSG;
           }
 
+          const incomingValue = camelCaseString(value);
+
+          if (listIncludes(availableProviders, incomingValue)) {
+            return `${chalk.red.bold(incomingValue)} already exists. Please enter the name that does not exist`;
+          }
+
           return true;
         },
-        when: !providerName,
-        filter: (input: string) => camelCaseString(input),
+        when: !args.name || listIncludes(availableProviders, args.name),
+        filter: (input: string) =>
+          listIncludes(availableProviders, camelCaseString(input)) ? input : camelCaseString(input),
       },
     ]);
 
@@ -77,15 +88,7 @@ export default class ProviderCommand extends BaseCommand {
     const providersIndexPath = this.sourceDestinationPath('providers/index.ts');
 
     // update contexts/index.ts to add the new namespace to the list
-    this.fs.copy(providersIndexPath, providersIndexPath, {
-      process(content) {
-        const regEx = new RegExp(/\/\* NEW_PROVIDER_EXPORT_GOES_HERE \*\//, 'g');
-        const newContent = content
-          .toString()
-          .replace(regEx, `export * from './${providerName}';\n/* NEW_PROVIDER_EXPORT_GOES_HERE */\n`);
-        return newContent;
-      },
-    });
+    this.replaceContent(providersIndexPath, `export * from './${providerName}';`, 'NEW_PROVIDER_EXPORT_GOES_HERE');
 
     const providerConfig: IConfigStore = {
       name: providerName,

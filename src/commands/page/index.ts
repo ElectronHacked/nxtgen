@@ -54,14 +54,14 @@ export default class PageCommand extends BaseCommand {
         },
       ])
       .then(({ nameOfThePage }) => {
-        pageName = nameOfThePage;
+        pageName = pageName || nameOfThePage;
 
         return this.inquirer.prompt([
           {
             type: 'input',
             name: 'pageTitle',
             message: 'Page title',
-            default: humanizeString(nameOfThePage),
+            default: humanizeString(pageName),
             when: shouldPromptForTitle,
             validate: str => {
               if (str.trim().length > 0) {
@@ -111,9 +111,6 @@ export default class PageCommand extends BaseCommand {
 
     const componentName = pascalCaseName(originalPageName);
 
-    // // // create folder project
-    // mkdirp(`${pageStorage}/${pageName}`);
-
     // copy page into the pages folder
     this.fs.copyTpl(this.templatePath('page/_index.js'), `${pageStorage}/${pageName}/index.tsx`, {
       componentName,
@@ -127,7 +124,8 @@ export default class PageCommand extends BaseCommand {
     });
 
     const PAGE_URL_NAME = `${dashifyString(pageName, '_')}_URL`.toUpperCase();
-    const PAGE_URL_EXPORT_DECLARATION = `export const ${PAGE_URL_NAME} = '${relativePath}';`;
+    
+    const PAGE_URL_EXPORT_DECLARATION = `export const ${PAGE_URL_NAME} = '${relativePath}';\n`;
 
     const PAGE_ROUTE_OBJECT = `{
       name: ${PAGE_URL_NAME},
@@ -138,25 +136,11 @@ export default class PageCommand extends BaseCommand {
       permissionName: '',
     },`;
 
-    const ROUTES_FILE_PATH = this.sourceDestinationPath('routes');
+    const ROUTES_FILE_PATH = this.sourceDestinationPath('routes/index.ts');
 
-    this.fs.copy(ROUTES_FILE_PATH, ROUTES_FILE_PATH, {
-      process(content) {
-        const regEx = new RegExp(/\/\* NEW_PAGE_DECLARATION_GOES_HERE \*\//, 'g');
-        const newContent = content
-          .toString()
-          .replace(regEx, `${PAGE_URL_EXPORT_DECLARATION}\n\n/* NEW_PAGE_DECLARATION_GOES_HERE */\n`);
-        return newContent;
-      },
-    });
+    this.replaceContent(ROUTES_FILE_PATH, PAGE_URL_EXPORT_DECLARATION, 'NEW_PAGE_DECLARATION_GOES_HERE');
 
-    this.fs.copy(ROUTES_FILE_PATH, ROUTES_FILE_PATH, {
-      process(content) {
-        const regEx = new RegExp(/\/\* NEW_PAGE_LINK_GOES_HERE \*\//, 'g');
-        const newContent = content.toString().replace(regEx, `${PAGE_ROUTE_OBJECT}\n/* NEW_PAGE_LINK_GOES_HERE */`);
-        return newContent;
-      },
-    });
+    this.replaceContent(ROUTES_FILE_PATH, PAGE_ROUTE_OBJECT, 'NEW_PAGE_LINK_GOES_HERE');
 
     this.logAffectedFiles();
   }
