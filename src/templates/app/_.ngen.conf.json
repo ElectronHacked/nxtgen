@@ -4,7 +4,7 @@
   "enums": ["FlagsActionTypes", "HttpStatusCodes"],
   "models": [],
   "hooks": [],
-  "hocs": [],
+  "hocs": ["withAuth", "withMemo"],
   "contexts": [],
   "providers": [
     {
