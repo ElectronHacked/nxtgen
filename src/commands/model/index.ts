@@ -2,6 +2,7 @@ import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
 import { ConfigKeys } from '../../enums';
 import { pascalCaseName, camelCaseString, listIncludes } from '../../tools';
+import chalk = require('chalk');
 
 const ensureTheNameConforms = (input: string) => `I${pascalCaseName(input)}`;
 
@@ -16,6 +17,7 @@ export default class ModelCommand extends BaseCommand {
     {
       name: 'name',
       description: 'name of the interface/model',
+      parse: ensureTheNameConforms,
     },
   ];
 
@@ -38,15 +40,17 @@ export default class ModelCommand extends BaseCommand {
             return PROMPT_MSG;
           }
 
-          const hoc = ensureTheNameConforms(value);
+          const incomingValue = ensureTheNameConforms(value);
 
-          if (listIncludes(availableModels, hoc)) {
-            return `${value} already exists. Please enter the name that does not exist`;
+          if (listIncludes(availableModels, incomingValue)) {
+            return `${chalk.red.bold(incomingValue)} already exists. Please enter the name that does not exist`;
           }
 
           return true;
         },
         when: !args.name || listIncludes(availableModels, args.name),
+        filter: (input: string) =>
+          listIncludes(availableModels, ensureTheNameConforms(input)) ? input : ensureTheNameConforms(input),
       },
     ]);
 
