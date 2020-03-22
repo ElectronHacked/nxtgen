@@ -61,5 +61,7 @@ export default class InitCommand extends BaseCommand {
         createdFiles.forEach((filePath: string) => this.log(`${chalk.green('Created')} ${filePath}`));
       }
     );
+
+    this.logAffectedFiles();
   }
 }

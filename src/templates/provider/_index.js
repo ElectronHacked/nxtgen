@@ -6,9 +6,14 @@ import {
   <%= stateNameCaps %>_CONTEXT_INITIAL_STATE
 } from './contexts';
 import { getFlagSetters } from '../utils/flagsSetters';
+import { defaultAction, /* NEW_ACTION_IMPORT_GOES_HERE */ } from './actions';
 
 const <%= stateName %>Provider: FC<PropsWithChildren<any>> = ({ children }) => {
   const [state, dispatch] = useReducer(<%= stateNameCamelCase %>Reducer, <%= stateNameCaps %>_CONTEXT_INITIAL_STATE);
+
+  //#region REMOVE THIS ACTION
+  const _defaultAction = () => dispatch(defaultAction());
+  //#endregion
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 

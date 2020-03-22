@@ -1,4 +1,5 @@
 import { flags } from '@oclif/command';
+const escapeStringRegexp = require('escape-string-regexp');
 import BaseCommand from '../../base';
 const fuzzy = require('fuzzy');
 import _ = require('lodash');
@@ -167,51 +168,44 @@ export default class PageCommand extends BaseCommand {
     const actionsPath = this.sourceDestinationPath(`providers/${provider}/actions.ts`);
 
     if (success || error || isInProgress || actioned) {
+      if (isInProgress) {
+        if (actioned) {
+          updateActionTemplates('request', true);
+          this.replaceContent(contextPath, ` | '${actionName}'`, 'NEW_ACTIONED_FLAG_GOES_HERE', false, false);
+        } else {
+          updateActionTemplates('request');
+        }
+
+        // IFlagProgressFlags
+        this.replaceContent(contextPath, ` | '${actionName}'`, 'NEW_IN_PROGRESS_FLAG_GOES_HERE', false, false);
+      } else if (actioned) {
+        updateActionTemplates('', true);
+        this.replaceContent(contextPath, ` | '${actionName}'`, 'NEW_ACTIONED_FLAG_GOES_HERE', false, false);
+      }
+
       if (success) {
         updateActionTemplates('success');
 
         // IFlagSucceededFlags
-        this.replaceContent(contextPath, ` | ${newLineString(actionName)}`, 'NEW_SUCCEEDED_FLAG_GOES_HERE');
+        this.replaceContent(contextPath, ` | '${actionName}'`, 'NEW_SUCCEEDED_FLAG_GOES_HERE', false, false);
       }
 
       if (error) {
         updateActionTemplates('error');
 
         // IFlagErrorFlags
-        this.replaceContent(contextPath, ` | ${newLineString(actionName)}`, 'NEW_ERROR_FLAG_GOES_HERE');
-      }
-
-      if (isInProgress) {
-        if (actioned) {
-          updateActionTemplates('request', true);
-          this.replaceContent(contextPath, ` | ${newLineString(actionName)}`, 'NEW_ACTIONED_FLAG_GOES_HERE');
-        } else {
-          updateActionTemplates('request');
-        }
-
-        // IFlagProgressFlags
-        this.replaceContent(contextPath, ` | ${newLineString(actionName)}`, 'NEW_IN_PROGRESS_FLAG_GOES_HERE');
-      } else if (actioned) {
-        updateActionTemplates('', true);
-        this.replaceContent(contextPath, ` | ${newLineString(actionName)}`, 'NEW_ACTIONED_FLAG_GOES_HERE');
+        this.replaceContent(contextPath, ` | '${actionName}'`, 'NEW_ERROR_FLAG_GOES_HERE', false, false);
       }
     } else {
       updateActionTemplates('');
     }
-
-    // this.log(`ACTION_CONTEXT_DECLARATIONS   : ${ACTION_CONTEXT_DECLARATIONS}\n\n\n`);
-    // this.log(`ACTION_ENUM_DECLARATIONS   : ${ACTION_ENUM_DECLARATIONS}\n\n\n`);
-    // this.log(`ACTION_CREATORS_DECLARATIONS   : ${ACTION_CREATORS_DECLARATIONS}\n\n\n`);
-    // this.log(`ACTIONS_REDUCER_SWITCHES   : ${ACTIONS_REDUCER_SWITCHES}\n\n\n`);
-    // this.log(`ACTIONS_INDEX_IMPORTS   : ${ACTIONS_INDEX_IMPORTS}\n\n\n`);
-    // this.log(`ACTIONS_INDEX_METHODS_DECLARATIONS   : ${ACTIONS_INDEX_METHODS_DECLARATIONS}\n\n\n`);
-    // this.log(`ACTIONS_INDEX_METHODS_EXPORTS   : ${ACTIONS_INDEX_METHODS_EXPORTS}\n\n\n`);
 
     // providers/contexts.ts
     this.replaceContent(contextPath, ACTION_CONTEXT_DECLARATIONS, 'NEW_ACTION_ACTION_DECLARATIO_GOES_HERE');
 
     // providers/actions.ts
     this.replaceContent(actionsPath, ACTION_ENUM_DECLARATIONS, 'NEW_ACTION_TYPE_GOES_HERE');
+
     this.replaceContent(actionsPath, ACTION_CREATORS_DECLARATIONS, 'NEW_ACTION_GOES_HERE');
 
     // providers/reducer.ts
@@ -221,11 +215,6 @@ export default class PageCommand extends BaseCommand {
     this.replaceContent(indexPath, ACTIONS_INDEX_IMPORTS, 'NEW_ACTION_IMPORT_GOES_HERE');
     this.replaceContent(indexPath, ACTIONS_INDEX_METHODS_DECLARATIONS, 'NEW_ACTION_DECLARATION_GOES_HERE');
     this.replaceContent(indexPath, ACTIONS_INDEX_METHODS_EXPORTS, 'NEW_ACTION_GOES_HERE');
-
-    this.log(`${chalk.red.bold('> Modified')}: ${contextPath}`);
-    this.log(`${chalk.red.bold('> Modified')}: ${indexPath}`);
-    this.log(`${chalk.red.bold('> Modified')}: ${reducerPath}`);
-    this.log(`${chalk.red.bold('> Modified')}: ${actionsPath}`);
 
     this.logAffectedFiles();
   }

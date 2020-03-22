@@ -1,8 +1,9 @@
 import { Command } from '@oclif/command';
 import { IConfig } from '@oclif/config';
 import makeDir = require('make-dir');
+const { spawn } = require('child_process');
 import path = require('path');
-import fs = require('fs');
+import fs = require('fs-extra');
 import memFs = require('mem-fs');
 import FileEditor = require('mem-fs-editor');
 import Conf = require('conf');
@@ -84,7 +85,7 @@ abstract class BaseCommand extends Command {
 
   logAffectedFiles() {
     this.log();
-    this._sharedFsCopy.each(file => {
+    this.sharedFs.each(file => {
       if (file.hasOwnProperty('isNew')) {
         let state = FileCreationState.Created;
         let chackColor = chalk.green;
@@ -183,15 +184,22 @@ abstract class BaseCommand extends Command {
     return path.resolve(`./src/${destination}`);
   }
 
-  replaceContent(path: string, text: string, pattern: string) {
-    this.fs.copy(path, path, {
-      process(content) {
-        const regEx = new RegExp(escapeStringRegexp(pattern), 'g');
-        const newContent = content.toString().replace(regEx, text);
+  replaceContent(path: string, content: string, pattern: string, newLineStart = true, newLineEnd = true) {
+    const preparedPattern = `/* ${pattern} */`;
 
-        return `${newContent}\n/* ${pattern} */`;
-      },
-    });
+    const prefixNewLine = newLineStart ? '\n' : '';
+    const suffixNewLine = newLineEnd ? '\n' : '';
+
+    const value = this.fs.read(path);
+    const regEx = new RegExp(escapeStringRegexp(preparedPattern), 'g');
+
+    if (value.includes(content)) {
+      this.log(`Value already includes contents`);
+    }
+
+    const result = value.replace(regEx, `${content}${prefixNewLine}${preparedPattern}${suffixNewLine}`);
+
+    this.fs.write(path, result);
   }
 
   /**
@@ -201,11 +209,11 @@ abstract class BaseCommand extends Command {
   private _writeFiles() {
     if (this.fs) {
       // Whenever a file shanges, we just store the those files in the copy of changed files for later logging
-      this._sharedFsCopy = this.sharedFs;
+      // this._sharedFsCopy = this.sharedFs;
 
       this.fs.commit(err => {
         if (err) {
-          this.error(`Sorry, an ${chalk.red.bold('error')} occured and while persisting the data`);
+          this.error(`Sorry, an ${chalk.red.bold('error')} occured while persisting the data`);
         }
       });
     }
