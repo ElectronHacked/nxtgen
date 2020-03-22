@@ -1,7 +1,7 @@
 export const listIncludes = (list: string[], item: string) => {
-  if (!list || !item || !list.length) {
+  if (!Array.isArray(list) || !item) {
     return false;
   }
 
-  return !! list.find(listItem => new RegExp(item, 'i').test(listItem) && listItem.length === item.length);
+  return !!list.find(listItem => listItem.toLowerCase() === item.toLowerCase());
 };

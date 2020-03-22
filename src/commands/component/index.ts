@@ -1,7 +1,6 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
 import { camelCaseString, pascalCaseName, hiphenizeString, getRelativePathStringFrom } from '../../tools';
-import { ConfigKeys } from '../../enums';
 
 export default class ComponentCommand extends BaseCommand {
   static description = 'adds a new component';

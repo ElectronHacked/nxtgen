@@ -2,6 +2,7 @@ import { flags } from '@oclif/command';
 import { listIncludes, pascalCaseName, camelCaseString } from '../../tools';
 import BaseCommand from '../../base';
 import { ConfigKeys } from '../../enums';
+import chalk = require('chalk');
 
 export default class EnumCommand extends BaseCommand {
   static description = 'adds a new enum';
@@ -23,7 +24,7 @@ export default class EnumCommand extends BaseCommand {
 
     let { name: enumName } = args;
 
-    const availableHocs: string[] = this.store.get(ConfigKeys.Enums);
+    const availableEnums: string[] = this.store.get(ConfigKeys.Enums);
 
     const NAME_PROMPT_MSG = 'Please enter name of the enum';
 
@@ -37,16 +38,17 @@ export default class EnumCommand extends BaseCommand {
             return NAME_PROMPT_MSG;
           }
 
-          const hoc = pascalCaseName(value);
+          const enumValue = pascalCaseName(value);
 
-          if (listIncludes(availableHocs, hoc)) {
-            return `${value} already exists. Please enter the name that does not exist`;
+          if (listIncludes(availableEnums, enumValue)) {
+            return `${chalk.red.bold(enumValue)} already exists. Please enter the name that does not exist`;
           }
 
           return true;
         },
-        when: !args.name || listIncludes(availableHocs, args.name),
-        filter: (input: string) => pascalCaseName(input),
+        when: !args.name || listIncludes(availableEnums, args.name),
+        filter: (input: string) =>
+          listIncludes(availableEnums, pascalCaseName(input)) ? input : pascalCaseName(input),
       },
     ]);
 

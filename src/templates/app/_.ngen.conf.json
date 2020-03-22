@@ -1,7 +1,7 @@
 {
   "name": "{{projectName}}",
   "components": [],
-  "enums": [],
+  "enums": ["FlagsActionTypes", "HttpStatusCodes"],
   "models": [],
   "hooks": [],
   "hocs": [],
