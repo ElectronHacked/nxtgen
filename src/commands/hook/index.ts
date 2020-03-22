@@ -2,6 +2,7 @@ import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
 import { ensureItStartsWith, listIncludes } from '../../tools';
 import { ConfigKeys } from '../../enums';
+import chalk = require('chalk');
 
 const HOOK_PREFIX = 'use';
 const ensureNameConforms = (input: string) => ensureItStartsWith(input, HOOK_PREFIX);
@@ -40,16 +41,17 @@ export default class HookCommand extends BaseCommand {
             return PROMPT_MSG;
           }
 
-          const hoc = ensureNameConforms(value);
+          const hook = ensureNameConforms(value);
 
-          if (listIncludes(availableHooks, hoc)) {
-            return `${value} already exists. Please enter the name that does not exist`;
+          if (listIncludes(availableHooks, hook)) {
+            return `${chalk.red.bold(hook)} already exists. Please enter the name that does not exist`;
           }
 
           return true;
         },
         when: !args.name || listIncludes(availableHooks, args.name),
-        filter: (input: string) => ensureNameConforms(input),
+        filter: (input: string) =>
+          listIncludes(availableHooks, ensureNameConforms(input)) ? input : ensureNameConforms(input),
       },
     ]);
 
