@@ -58,7 +58,7 @@ export default class InitCommand extends BaseCommand {
       { projectName },
       (err, createdFiles) => {
         if (err) throw err;
-        createdFiles.forEach((filePath: string) => this.log(`${chalk.green('Created')} ${filePath}`));
+        createdFiles.forEach((filePath: string) => this.log(`${chalk.green.bold('Created')} ${filePath}`));
       }
     );
 
