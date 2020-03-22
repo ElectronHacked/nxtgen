@@ -2,6 +2,7 @@ import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
 import { ensureItEndsWith, listIncludes, camelCaseString } from '../../tools';
 import { ConfigKeys } from '../../enums';
+import chalk = require('chalk');
 
 const CONTEXT_SUFFIX = 'Context';
 const ensureNameConforms = (input: string) => ensureItEndsWith(input, CONTEXT_SUFFIX);
@@ -43,13 +44,14 @@ export default class ContextCommand extends BaseCommand {
           const context = ensureNameConforms(value);
 
           if (listIncludes(availableContexts, context)) {
-            return `${value} already exists. Please enter the name that does not exist`;
+            return `${chalk.red.bold(context)} already exists. Please enter the name that does not exist`;
           }
 
           return true;
         },
         when: !args.name || listIncludes(availableContexts, args.name),
-        filter: (input: string) => ensureNameConforms(input),
+        filter: (input: string) =>
+          listIncludes(availableContexts, ensureNameConforms(input)) ? input : ensureNameConforms(input),
       },
     ]);
 

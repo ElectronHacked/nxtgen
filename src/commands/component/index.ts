@@ -81,7 +81,7 @@ export default class ComponentCommand extends BaseCommand {
       }
     );
 
-    // // copy styles.scss
+    // copy styles.scss
     this.fs.copyTpl(
       this.templatePath('component/_styles.scss'),
       `${componentStorage}/${componentNameCamelCase}/styles.scss`,
