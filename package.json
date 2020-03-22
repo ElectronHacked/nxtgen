@@ -54,6 +54,7 @@
     "@types/inquirer": "^6.5.0",
     "@types/listr": "^0.14.2",
     "@types/mem-fs-editor": "^5.1.1",
+    "@types/mkdirp": "^1.0.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "^10.17.5",
     "@types/qs": "^6.9.0",

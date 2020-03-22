@@ -1,6 +1,6 @@
 import { flags } from '@oclif/command';
 import chalk = require('chalk');
-const mkdirp = require('mkdirp');
+import mkdirp = require('mkdirp');
 import decamelize = require('decamelize');
 import BaseCommand from '../../base';
 
