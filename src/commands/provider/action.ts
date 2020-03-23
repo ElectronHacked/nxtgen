@@ -1,9 +1,15 @@
 import { flags } from '@oclif/command';
-const escapeStringRegexp = require('escape-string-regexp');
 import BaseCommand from '../../base';
 const fuzzy = require('fuzzy');
 import _ = require('lodash');
-import { newLineString, dashifyString, camelCaseString, pascalCaseName } from '../../tools';
+import {
+  newLineString,
+  dashifyString,
+  camelCaseString,
+  pascalCaseName,
+  ensureItEndsWith,
+  listIncludes,
+} from '../../tools';
 import { ConfigKeys } from '../../enums';
 import { IConfigStore } from './../../models/configSchema.d';
 import chalk = require('chalk');
@@ -17,6 +23,8 @@ interface IActionTemplates {
   actionIndexMethodDeclarations: string;
   actionIndexMethodExports: string;
 }
+
+const ensureNameConforms = (input: string) => ensureItEndsWith(input, 'Action');
 
 const ACTION_FLAGS = ['success', 'error', 'isInProgress', 'actioned'];
 
@@ -35,12 +43,12 @@ export default class PageCommand extends BaseCommand {
 
   static args = [
     {
-      name: 'name',
-      description: 'name of the action',
-    },
-    {
       name: 'provider',
       description: 'name of the provider',
+    },
+    {
+      name: 'name',
+      description: 'name of the action',
     },
   ];
 
@@ -60,21 +68,12 @@ export default class PageCommand extends BaseCommand {
 
     const shouldPromptForName = !actionName;
 
+    const getProviderActions = () => {
+      return provider ? providers.find(({ name }) => name === provider)?.actions || [] : [];
+    };
+
     const responses = await this.inquirer
       .prompt([
-        {
-          name: 'nameOfTheAction',
-          type: 'input',
-          message: NAME_PROMPT_MSG,
-          validate: (value: string) => {
-            if (!value) {
-              return NAME_PROMPT_MSG;
-            }
-
-            return true;
-          },
-          when: shouldPromptForName,
-        },
         {
           name: 'providerName',
           message: 'Select the provider for this action',
@@ -94,17 +93,43 @@ export default class PageCommand extends BaseCommand {
           },
           when: !provider,
         },
-        {
-          name: 'shouldHaveFlags',
-          type: 'confirm',
-          message: 'Should this action have flags (isInProgress, error, success, actioned)?',
-          default: false,
-          when: hasNoFlag,
-        },
       ])
-      .then(({ shouldHaveFlags, nameOfTheAction, providerName }) => {
-        actionName = actionName || nameOfTheAction;
+      .then(({ providerName }) => {
         provider = provider || providerName;
+
+        return this.inquirer.prompt([
+          {
+            name: 'nameOfTheAction',
+            type: 'input',
+            message: NAME_PROMPT_MSG,
+            validate: (value: string) => {
+              if (!value) {
+                return NAME_PROMPT_MSG;
+              }
+
+              const incomingActionName = ensureNameConforms(value);
+
+              if (listIncludes(providerNames, incomingActionName)) {
+                return `${chalk.yellow.bold(provider)} already has an action named ${chalk.red.bold(
+                  provider
+                )} . Please enter the name that does not exist`;
+              }
+
+              return true;
+            },
+            when: shouldPromptForName || listIncludes(providerNames, ensureNameConforms(actionName)),
+          },
+          {
+            name: 'shouldHaveFlags',
+            type: 'confirm',
+            message: 'Should this action have flags (isInProgress, error, success, actioned)?',
+            default: false,
+            when: hasNoFlag,
+          },
+        ]);
+      })
+      .then(({ shouldHaveFlags, nameOfTheAction }) => {
+        actionName = actionName || nameOfTheAction;
 
         return this.inquirer.prompt([
           {
@@ -217,6 +242,10 @@ export default class PageCommand extends BaseCommand {
     this.replaceContent(indexPath, ACTIONS_INDEX_METHODS_EXPORTS, 'NEW_ACTION_GOES_HERE');
 
     this.logAffectedFiles();
+  }
+
+  getProviderActions(provider: IConfigStore) {
+    return provider && provider.actions;
   }
 
   getActionTemplates(
