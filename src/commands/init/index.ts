@@ -51,16 +51,19 @@ export default class InitCommand extends BaseCommand {
     // change project root to the new folder
     this.destinationRoot(this.rootDestinationPath(projectName));
 
+    // copy package.json and update some values
+    this.fs.copyTpl(this.templatePath('init/_package.json'), this.rootDestinationPath('package.json'), {
+      projectName,
+    });
+
+    // copy package.json and update some values
+    this.fs.copyTpl(this.templatePath('init/_.ngen.conf.json'), this.rootDestinationPath('.ngen.conf.json'), {
+      projectName,
+    });
+
     // Now, generate the project
-    this.copyTemplateDir(
-      this.templatePath('app'),
-      this.rootDestinationPath('./'),
-      { projectName },
-      (err, createdFiles) => {
-        if (err) throw err;
-        createdFiles.forEach((filePath: string) => this.log(`${chalk.green.bold('Created')} ${filePath}`));
-      }
-    );
+    // this.fs.copy could have worked as well. I just used this method because it allows me to also log written files
+    this.fs.copy(this.templatePath('init/app'), this.rootDestinationPath('./'));
 
     this.logAffectedFiles();
   }
