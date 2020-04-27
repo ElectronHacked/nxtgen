@@ -1,11 +1,10 @@
 import { flags } from '@oclif/command';
-import chalk = require('chalk');
 import mkdirp = require('mkdirp');
 import decamelize = require('decamelize');
 import BaseCommand from '../../base';
 
 export default class InitCommand extends BaseCommand {
-  static description = 'generates a new project hahaha';
+  static description = 'generates a new project';
 
   static flags = {
     help: flags.help({ char: 'h' }),
@@ -62,7 +61,6 @@ export default class InitCommand extends BaseCommand {
     });
 
     // Now, generate the project
-    // this.fs.copy could have worked as well. I just used this method because it allows me to also log written files
     this.fs.copy(this.templatePath('init/app'), this.rootDestinationPath('./'));
 
     this.logAffectedFiles();

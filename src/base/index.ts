@@ -81,9 +81,13 @@ abstract class BaseCommand extends Command {
     return this._destinationRoot || process.cwd();
   }
 
+  /**
+   * Logs all the files which have been affected to the console - created and modified files
+   */
   logAffectedFiles() {
     this.log();
     this.sharedFs.each(file => {
+      // Files which are affected will have `isNew` property
       if (file.hasOwnProperty('isNew')) {
         let state = FileCreationState.Created;
         let chackColor = chalk.green;
