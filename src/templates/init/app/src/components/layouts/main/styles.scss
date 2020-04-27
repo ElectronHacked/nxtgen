@@ -1,6 +1,6 @@
-@import 'styles/variables';
-@import 'styles/mixins';
-@import 'styles/main';
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
+@import 'src/styles/main';
 
 $white: #ffffff;
 $sider-collapsed-width: 40px;
@@ -208,9 +208,5 @@ $header-sides-spadding: $ant-menu-item;
         font-size: 15px;
       }
     }
-  }
-
-  .overlay {
-    top: 5px;
   }
 }

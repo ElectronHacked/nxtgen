@@ -9,6 +9,7 @@ import './styles.scss';
 import { LayoutSideMenu } from 'components';
 import { useGlobal } from 'providers';
 import { useAuth } from 'providers/auth';
+import { isAuthorized } from 'utils/auth';
 
 const { Sider, Content } = Layout;
 
@@ -37,9 +38,7 @@ const MainLayout: React.FC<IProps> = ({
   const { asPath } = useRouter();
   const { loginInfo } = useAuth();
   const grantedPermissions = loginInfo?.grantedPermissions || [];
-  const availableAppRoutes = appRoutes.filter(
-    i => !Boolean(i.permissionName) || grantedPermissions.indexOf(i.permissionName as any) > -1
-  );
+  const availableAppRoutes = appRoutes.filter(i => isAuthorized(grantedPermissions, i.permissionName));
 
   const [isCollapsed, setIsCollapsed] = useState(true);
 
@@ -49,7 +48,7 @@ const MainLayout: React.FC<IProps> = ({
 
   return (
     <div className={`layout-container ${isHeaderShown ? '' : 'header-collapsed'}`}>
-      <Head title={title} description={description} ogImage={ogImage} url={url} />
+      <Head title={title || ''} description={description} ogImage={ogImage} url={url} />
       <LayoutHeader />
       <Layout className="layout">
         <Sider theme="light" trigger={null} collapsible collapsed={isCollapsed}>
@@ -63,7 +62,7 @@ const MainLayout: React.FC<IProps> = ({
           <LayoutSideMenu links={availableAppRoutes} isCollapsed={isCollapsed} />
 
           <div className="creator-logo">
-            <img src="/static/images/creator_logo.png" alt="Creator" />
+            <img src="/images/creator_logo.png" alt="Creator" />
           </div>
         </Sider>
 

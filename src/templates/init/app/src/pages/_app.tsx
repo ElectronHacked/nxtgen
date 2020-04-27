@@ -11,12 +11,12 @@ interface IState {
 }
 
 export default class Main extends App<{}, {}, IState> {
-  static async getInitialProps({ Component, ctx }) {
+  static async getInitialProps({ Component, ctx }: { Component: any; ctx: any }) {
     const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
     return { pageProps };
   }
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = {
       headers: {},
@@ -44,14 +44,13 @@ export default class Main extends App<{}, {}, IState> {
 
   render() {
     const { Component, pageProps } = this.props;
-    const requestOptions = {
-      headers: this.state.headers,
-    };
 
     return (
       <RestfulProvider
         base={BASE_URL}
-        requestOptions={requestOptions}
+        requestOptions={{
+          headers: this.state.headers,
+        }}
       >
         <GlobalProvider>
           <CustomNProgress />

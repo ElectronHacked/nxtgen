@@ -1,6 +1,10 @@
 import React, { FC, useReducer, useContext, PropsWithChildren } from 'react';
 import { globalReducer } from './reducer';
-import { toggleHeaderVisibilityAction, fetchPostsAction, fetchPostsSuccessAction, /* NEW_ACTION_IMPORT_GOES_HERE */ } from './actions';
+import {
+  toggleHeaderVisibilityAction,
+  fetchPostsAction,
+  fetchPostsSuccessAction /* NEW_ACTION_IMPORT_GOES_HERE */,
+} from './actions';
 import { GlobalActionsContext, defaultGlobalStateContext, GlobalStateContext } from './contexts';
 import { getFlagSetters } from 'providers/utils/flagsSetters';
 
@@ -14,18 +18,18 @@ const GlobalProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
-  // The main reason I put the value here is that the package I use to copy templates, `copy-template-dir` when generating the code, causes
-  // Issues each time it sees double `{`. It expects that to be a template
-  const value = {
-    ...getFlagSetters(dispatch),
-    toggleHeaderVisibility,
-    fetchPosts,
-    fetchPostsSuccess /* NEW_ACTION_GOES_HERE */,
-  };
-
   return (
     <GlobalStateContext.Provider value={state}>
-      <GlobalActionsContext.Provider value={value}>{children}</GlobalActionsContext.Provider>
+      <GlobalActionsContext.Provider
+        value={{
+          ...getFlagSetters(dispatch),
+          toggleHeaderVisibility,
+          fetchPosts,
+          fetchPostsSuccess /* NEW_ACTION_GOES_HERE */,
+        }}
+      >
+        {children}
+      </GlobalActionsContext.Provider>
     </GlobalStateContext.Provider>
   );
 };
@@ -33,7 +37,7 @@ const GlobalProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 const useGlobalState = () => {
   const context = useContext(GlobalStateContext);
 
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useGlobalState must be used within a GlobalProvider');
   }
   return context;
@@ -42,7 +46,7 @@ const useGlobalState = () => {
 const useGlobalActions = () => {
   const context = useContext(GlobalActionsContext);
 
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useGlobalActions must be used within a GlobalProvider');
   }
 

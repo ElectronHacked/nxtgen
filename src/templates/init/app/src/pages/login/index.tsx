@@ -22,7 +22,7 @@ export const Login = () => {
     loginUser(formState.values);
   };
 
-  const getInputValidationMessage = key => {
+  const getInputValidationMessage = (key: keyof ILoginForm) => {
     return formState.touched[key] && !formState.validity[key] ? 'error' : '';
   };
 

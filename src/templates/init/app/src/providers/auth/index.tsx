@@ -41,6 +41,7 @@ import { getFlagSetters } from 'providers/utils/flagsSetters';
 import { useTokenAuthAuthenticate, useTokenAuthSignOff } from 'api/tokenAuth';
 import { useSessionGetCurrentLoginInformations } from 'api/session';
 import { useMutateHttp } from 'hooks';
+import { HttpStatusCodes } from 'enums';
 
 const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {});
@@ -49,11 +50,13 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
   const { nextRoute } = useRouteState();
 
-  const { mutate: loginUserRequest } = useTokenAuthAuthenticate(null);
+  const { mutate: loginUserRequest } = useTokenAuthAuthenticate({});
 
-  const { mutate: signOffRequest } = useTokenAuthSignOff(null);
+  const { mutate: signOffRequest } = useTokenAuthSignOff({});
 
-  const { mutate: resetPasswordSendOtp } = useMutateHttp({ path: '/api/services/app/User/ResetPasswordSendOtp' });
+  const { mutate: resetPasswordSendOtp } = useMutateHttp<ResetPasswordSendOtpResponseAjaxResponse>({
+    path: '/api/services/app/User/ResetPasswordSendOtp',
+  });
 
   const { mutate: verifyOtpHttp } = useUserResetPasswordVerifyOtp({});
   const { mutate: resetPasswordHttp } = useUserResetPasswordUsingToken({});
@@ -127,8 +130,10 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
             // Let's fetch the user info
             fetchUserInfoRequest();
           }
-        } else {
-          dispatch(loginUserErrorAction(data.error.details || data.error.message, false));
+
+          if (data.error) {
+            dispatch(loginUserErrorAction(data.error.details || data.error.message || '', false));
+          }
         }
       })
       .catch((err: IHttpResponse<IAccessToken>) => {
@@ -169,12 +174,14 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
     const SEND_OTP_ERROR_MSG = 'Sorry, there seems to be a problem with the mobile number you provided';
 
-    resetPasswordSendOtp(null, { mobileNo: payload.mobileNo })
-      .then(({ data }: { data: ResetPasswordSendOtpResponseAjaxResponse }) => {
-        if (data.error) {
+    resetPasswordSendOtp(null, { mobileNo: payload.mobileNo || '' })
+      .then(({ data, status }) => {
+        if (status === HttpStatusCodes.InternalServerError) {
           dispatch(sendOtpErrorAction(SEND_OTP_ERROR_MSG));
         } else {
-          dispatch(sendOtpSuccessAction(data.result));
+          if (data?.result?.operationId) {
+            dispatch(sendOtpSuccessAction(data.result));
+          } else dispatch(sendOtpErrorAction(SEND_OTP_ERROR_MSG));
         }
       })
       .catch(() => {
@@ -183,7 +190,7 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
   };
 
   const verifyOtp = (payload: ResetPasswordVerifyOtpInput) => {
-    dispatch(verifyOtpAction(payload));
+    dispatch(verifyOtpAction(payload as UserResetPasswordSendOtpQueryParams));
 
     verifyOtpHttp(payload)
       .then(data => {
@@ -208,7 +215,7 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
     resetPasswordHttp(payload)
       .then(data => {
         const res = data as AjaxResponseBase;
-        if (res.success) {
+        if (res?.success) {
           dispatch(resetPasswordSuccessAction(res));
 
           setTimeout(() => {
@@ -227,28 +234,30 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
-  const value = {
-    ...getFlagSetters(dispatch),
-    checkAuth,
-    loginUser,
-    logoutUser,
-    sendOtp,
-    verifyOtp,
-    resetPassword,
-    toggleVerifyOtpModalVisibility,
-    /* NEW_ACTION_GOES_HERE */
-  };
-
   return (
     <AuthStateContext.Provider value={state}>
-      <AuthActionsContext.Provider value={value}>{children}</AuthActionsContext.Provider>
+      <AuthActionsContext.Provider
+        value={{
+          ...getFlagSetters(dispatch),
+          checkAuth,
+          loginUser,
+          logoutUser,
+          sendOtp,
+          verifyOtp,
+          resetPassword,
+          toggleVerifyOtpModalVisibility,
+          /* NEW_ACTION_GOES_HERE */
+        }}
+      >
+        {children}
+      </AuthActionsContext.Provider>
     </AuthStateContext.Provider>
   );
 };
 
 function useAuthState() {
   const context = useContext(AuthStateContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuthState must be used within a AuthProvider');
   }
   return context;

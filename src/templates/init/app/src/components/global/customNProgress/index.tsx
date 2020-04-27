@@ -12,7 +12,7 @@ export const CustomNProgress: FC<IProps> = () => {
     NProgress.done();
   };
 
-  const showProgressBar = delay => {
+  const showProgressBar = (delay: any) => {
     const timer = setTimeout(startProgress, delay);
     Router.events.on('routeChangeComplete', () => stopProgress(timer));
     Router.events.on('routeChangeError', () => stopProgress(timer));

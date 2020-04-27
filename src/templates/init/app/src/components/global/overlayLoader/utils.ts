@@ -42,7 +42,8 @@ export type SpinnerStyles =
   | 'SyncLoader';
 
 export default (loader: SpinnerStyles) => {
-  const map = {
+  // type IStringObj = { [name: string]: string };
+  const map: { [name: string]: any } = {
     BarLoader,
     BeatLoader,
     BounceLoader,

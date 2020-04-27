@@ -29,7 +29,7 @@ const scrollHorizontally = (eventParam: any, element: any) => {
   event.preventDefault();
 };
 
-export const horizontalMouseScroll = scrollableId => {
+export const horizontalMouseScroll = (scrollableId: string) => {
   try {
     const element = document.getElementById(scrollableId);
     if (!element) return;
@@ -63,7 +63,7 @@ export const compareValues = (firstVal: NumberOrString, secondVal: NumberOrStrin
  * @param value - a string to extract digits from
  */
 export const extractDigitsFromString = (value: string) => {
-  const extracted = typeof value === 'string' && !!value.trim() ? value.match(/\d+/g) : '';
+  const extracted = value.trim() ? value.match(/\d+/g) : '';
 
   return extracted ? extracted.join('') : '';
 };
@@ -73,7 +73,7 @@ export const extractDigitsFromString = (value: string) => {
  * @param value - the string value to trim
  */
 export const getSafelyTrimmedString = (value: string = '') => {
-  if (!value || typeof value !== 'string') return '';
+  if (!value) return '';
 
   return value.trim();
 };
@@ -86,7 +86,7 @@ export const camelCaseObjectKeys = (obj: object) => {
   const keys = Object.keys(obj);
   const values = Object.values(obj);
 
-  const response = {};
+  const response: { [name: string]: string } = {};
   for (let index = 0; index < keys.length; index += 1) {
     const key = camelCase(keys[index]);
     response[key] = values[index];

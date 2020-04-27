@@ -46,7 +46,7 @@ export const loginUserAction = createAction<IAuthStateContext, ILoginForm>(
   AuthActionEnums.LoginUserRequest,
   loginFormData => ({
     isLoggingInUser: true,
-    authErrorMsg: null,
+    authErrorMsg: undefined,
     ...loginFormData,
   })
 );
@@ -56,7 +56,7 @@ export const loginUserSuccessAction = createAction<IAuthStateContext, UserLoginI
   loginInfo => ({
     isLoggingInUser: false,
     isCheckingAuth: false,
-    authErrorMsg: null,
+    authErrorMsg: undefined,
     loginInfo,
     username: '',
     password: '',
@@ -77,12 +77,12 @@ export const loginUserErrorAction = createAction<IAuthStateContext, string, bool
 //#region Logout user
 export const logoutUserAction = createAction<IAuthStateContext>(AuthActionEnums.LogoutUserRequest, () => ({
   isLoggingOutUser: true,
-  authErrorMsg: null,
+  authErrorMsg: undefined,
 }));
 
 export const logoutUserSuccessAction = createAction<IAuthStateContext>(AuthActionEnums.LogoutUserSuccess, () => ({
   isLoggingOutUser: false,
-  authErrorMsg: null,
+  authErrorMsg: undefined,
 }));
 
 export const logoutUserErrorAction = createAction<IAuthStateContext, string>(
@@ -97,9 +97,9 @@ export const logoutUserErrorAction = createAction<IAuthStateContext, string>(
 //#region Forgot password
 export const sendOtpAction = createAction<IAuthStateContext, UserResetPasswordSendOtpQueryParams>(
   AuthActionEnums.SendOtpRequest,
-  sendOtpReqPayload => ({ sendOtpReqPayload, isSendingOtp: true, sendOtpError: null, verifyOtpError: null })
+  sendOtpReqPayload => ({ sendOtpReqPayload, isSendingOtp: true, sendOtpError: undefined, verifyOtpError: undefined })
 );
-
+// ResetPasswordSendOtpResponseAjaxResponse
 export const sendOtpSuccessAction = createAction<IAuthStateContext, ResetPasswordSendOtpResponse>(
   AuthActionEnums.SendOtpSuccess,
   sendOtpResPayload => ({

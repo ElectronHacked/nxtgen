@@ -1,13 +1,10 @@
 const express = require('express');
 const path = require('path');
 const next = require('next');
-
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
-
-const port = parseInt(process.env.PORT, 10) || 3000
-
+const port = parseInt(process.env.PORT, 10) || 3000;
 const i18nextMiddleware = require('i18next-express-middleware');
 const Backend = require('i18next-node-fs-backend');
 const { i18nInstance } = require('./i18n');
@@ -21,10 +18,36 @@ i18nInstance
     {
       fallbackLng: 'en',
       preload: ['en'], // preload all langages
-      ns: ['common'],
+      ns: [
+        'common',
+        'home',
+        'about',
+        'details',
+        'create',
+        'account',
+        'forgot-password',
+        'reset-passsword',
+        'teams',
+        'permissions',
+        'notifications',
+        'service-hooks',
+        'dashboards',
+        'project-configuration',
+        'team-configuration',
+        'git-hub-connections',
+        'repositories',
+        'cross-repo-policies',
+        'agent-pools',
+        'parallel-jobs',
+        'test-management',
+        'release-retention',
+        'service-connections',
+        'xaml-build-services',
+        'retention' /* new-i18n-namespace-here */,
+      ],
       backend: {
-        loadPath: path.join(__dirname, '/static/locales/{{lng}}/{{ns}}.json'),
-        addPath: path.join(__dirname, '/static/locales/{{lng}}/{{ns}}.missing.json'),
+        loadPath: path.join(__dirname, '/public/locales/{{lng}}/{{ns}}.json'),
+        addPath: path.join(__dirname, '/public/locales/{{lng}}/{{ns}}.missing.json'),
       },
       debug: false,
     },
@@ -37,7 +60,7 @@ i18nInstance
         server.use(i18nextMiddleware.handle(i18nInstance));
 
         // serve locales for client
-        server.use('/locales', express.static(path.join(__dirname, '/static/locales')));
+        server.use('/locales', express.static(path.join(__dirname, '/public/locales')));
 
         // missing keys
         server.post('/locales/add/:lng/:ns', i18nextMiddleware.missingKeyHandler(i18nInstance));
@@ -47,8 +70,8 @@ i18nInstance
 
         // note: we use custom port to prevent conflicts on test server
         server.listen(port, err => {
-          if (err) throw err
-          console.log(`> Ready on http://localhost:${port}`)
+          if (err) throw err;
+          console.log(`> Ready on http://localhost:${port}`);
         });
       });
     }

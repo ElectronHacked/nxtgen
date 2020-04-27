@@ -20,7 +20,7 @@ export const UnAuthedAccountPageLayout: FC<IProps> = ({ className, children, hea
           <Col {...accountFormCols}>
             <div className="un-authed-account-page-layout-form">
               <div className="un-authed-account-page-layout-logo">
-                <img src="../static/images/app-logo.png" />
+                <img src="/images/app-logo.png" />
               </div>
             </div>
 

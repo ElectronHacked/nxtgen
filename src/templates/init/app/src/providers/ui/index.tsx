@@ -14,13 +14,11 @@ const UiProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
   /* NEW_ACTION_DECLARATION_GOES_HERE */
 
-  // The main reason I put the value here is that the package I use to copy templates, `copy-template-dir` when generating the code, causes
-  // Issues each time it sees double `{`. It expects that to be a template
-  const value = { ...getFlagSetters(dispatch), setControlsSize /* NEW_ACTION_GOES_HERE */ };
-
   return (
     <UiStateContext.Provider value={state}>
-      <UiActionsContext.Provider value={value}>{children}</UiActionsContext.Provider>
+      <UiActionsContext.Provider value={{ ...getFlagSetters(dispatch), setControlsSize /* NEW_ACTION_GOES_HERE */ }}>
+        {children}
+      </UiActionsContext.Provider>
     </UiStateContext.Provider>
   );
 };

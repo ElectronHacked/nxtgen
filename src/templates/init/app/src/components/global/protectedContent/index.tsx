@@ -1,5 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 import { useAuth } from 'providers/auth';
+import { isAuthorized } from 'utils/auth';
 
 interface IProps {
   permissionName: string;
@@ -8,8 +9,9 @@ interface IProps {
 
 export const ProtectedContent: FC<IProps> = ({ permissionName, children }) => {
   const { loginInfo } = useAuth();
-  const grantedPermissions = loginInfo?.grantedPermissions || [];
-  const hasRights = grantedPermissions.indexOf(permissionName as any) > 0;
+
+  const hasRights = isAuthorized(loginInfo?.grantedPermissions, permissionName);
+
   return hasRights ? <React.Fragment>{children}</React.Fragment> : null;
 };
 

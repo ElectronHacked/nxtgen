@@ -41,7 +41,6 @@ export const TEAMS_INDEX_URL = '/teams';
 export const TEAMS_PERMISSION = 'pages:teams';
 
 export const PROJECTS_INDEX_URL = '/projects';
-
 export const PROJECTS_PERMISSION = 'pages:projects';
 
 export const INSPECTION_ASSIGNMENTS_INDEX_URL = '/inspectionAssignments';
@@ -65,8 +64,6 @@ export const ROLES_PERMISSION = 'pages:shaRoles';
 export const SETTINGS_URL = '/settings/overview';
 
 export const APP_SETTINGS_PERMISSION = 'pages:applicationSettings';
-
-export const SPECIAL_REDIRECT_LINKS = [];
 
 /* NEW_PAGE_DECLARATION_GOES_HERE */
 

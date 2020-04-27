@@ -35,6 +35,7 @@ export const querifyPayloadObject = (payload: any) => {
   const result = {};
 
   Object.keys(payload).forEach(key => {
+    // @ts-ignore
     result[`query.${key}`] = payload[key];
   });
 

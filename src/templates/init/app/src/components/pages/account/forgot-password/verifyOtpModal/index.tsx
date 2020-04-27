@@ -1,7 +1,8 @@
 import React, { FC, useContext, useState } from 'react';
 import './styles.scss';
 import { Modal, Form, Button, Input, Alert } from 'antd';
-import { AuthStateContext, AuthActionsContext } from 'providers/auth/contexts';
+import { AuthStateContext } from 'providers/auth/contexts';
+import { useAuthActions } from 'providers';
 
 const FormItem = Form.Item;
 interface IProps {}
@@ -19,7 +20,7 @@ export const VerifyOtpModal: FC<IProps> = () => {
   const { mobileNo } = sendOtpReqPayload || {};
   const { operationId } = sendOtpResPayload || {};
 
-  const { verifyOtp, sendOtp, toggleVerifyOtpModalVisibility } = useContext(AuthActionsContext);
+  const { verifyOtp, sendOtp, toggleVerifyOtpModalVisibility } = useAuthActions();
   const [pin, setPin] = useState('');
 
   const handleVerifyOtp = () => {

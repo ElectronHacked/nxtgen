@@ -16,7 +16,7 @@
           "hooks": "./src/hooks",
           "providers": "./src/providers",
           "routes": "./src/routes",
-          "styles": "./styles",
+          "styles": "./src/styles",
           "useApis": "./src/useApis",
           "utils": "./src/utils"
         }

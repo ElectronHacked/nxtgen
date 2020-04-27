@@ -26,7 +26,7 @@ export type UserLoginInfoDto = {
   loginProvider?: string | null;
   homeUrl?: string | null;
   isSelfServiceUser?: boolean;
-  grantedPermissions?: string | null[] | null;
+  grantedPermissions?: string | [] | null;
   id?: number;
 } | null;
 

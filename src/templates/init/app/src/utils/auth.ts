@@ -1,8 +1,6 @@
 import { IAccessToken, IPasswordValidation } from 'models';
-
 import { Subtract } from 'utility-types';
 import { ACCESS_TOKEN_NAME } from 'app-constants';
-import { LOGIN_PAGE_URL } from 'routes';
 
 // Fields to remove from the AuthContext
 interface IUnnecessaryTokenFields {
@@ -32,7 +30,7 @@ export const getAccessToken = (): IAccessToken | null => {
   if (token) {
     const deserializedToken = JSON.parse(token) as IAccessToken;
 
-    if (hasTokenExpired(deserializedToken.expireOn)) {
+    if (hasTokenExpired(deserializedToken.expireOn || '')) {
       removeAccessToken();
 
       return null;
@@ -67,7 +65,6 @@ export const removeAccessToken = () => {
   try {
     localStorage.removeItem(ACCESS_TOKEN_NAME);
     localStorage.clear();
-    window.location.href = LOGIN_PAGE_URL;
     return true;
   } catch (error) {
     return false;
@@ -108,4 +105,23 @@ export const getPasswordValidations = (password: string): IPasswordValidation =>
     hasSpecialChar: new RegExp('^.*[!@#$%^&*]').test(password),
     hasEightChars: password.length >= 8,
   };
+};
+
+export const isAuthorized = (
+  grantedPermissions: string | string[] | [] | null | undefined,
+  permissionName?: string
+) => {
+  if (!grantedPermissions || !permissionName) {
+    return false;
+  }
+
+  if (Array.isArray(grantedPermissions)) {
+    try {
+      return (grantedPermissions as string[]).includes(permissionName);
+    } catch (error) {
+      return false;
+    }
+  }
+
+  return grantedPermissions.includes(permissionName);
 };
