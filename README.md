@@ -18,8 +18,23 @@ A CLI tool for generating NextJs applications
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
+* [Usage](#usage)
+* [Commands](#commands)
+<!-- tocstop -->
 # Usage
 <!-- usage -->
+```sh-session
+$ npm install -g @shesha/nextg
+$ nextg COMMAND
+running command...
+$ nextg (-v|--version|version)
+@shesha/nextg/1.0.0 win32-x64 node-v10.16.3
+$ nextg --help [COMMAND]
+USAGE
+  $ nextg COMMAND
+...
+```
+<!-- usagestop -->
 ```sh-session
 $ npm install -g @shesha/nextg
 $ nextg COMMAND
@@ -46,6 +61,219 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
+* [`nextg component [NAME]`](#nextg-component-name)
+* [`nextg context [NAME]`](#nextg-context-name)
+* [`nextg enum [NAME]`](#nextg-enum-name)
+* [`nextg help [COMMAND]`](#nextg-help-command)
+* [`nextg hoc [NAME]`](#nextg-hoc-name)
+* [`nextg hook [NAME]`](#nextg-hook-name)
+* [`nextg init [NAME]`](#nextg-init-name)
+* [`nextg model [NAME]`](#nextg-model-name)
+* [`nextg module [NAME]`](#nextg-module-name)
+* [`nextg module:watch`](#nextg-modulewatch)
+* [`nextg page [NAME]`](#nextg-page-name)
+* [`nextg provider [NAME]`](#nextg-provider-name)
+* [`nextg provider:action [PROVIDER] [NAME]`](#nextg-provideraction-provider-name)
+
+## `nextg component [NAME]`
+
+adds a new component
+
+```
+USAGE
+  $ nextg component [NAME]
+
+ARGUMENTS
+  NAME  name of the component
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `nextg context [NAME]`
+
+adds a new context
+
+```
+USAGE
+  $ nextg context [NAME]
+
+ARGUMENTS
+  NAME  name of the context
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `nextg enum [NAME]`
+
+adds a new enum
+
+```
+USAGE
+  $ nextg enum [NAME]
+
+ARGUMENTS
+  NAME  name of the enum
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `nextg help [COMMAND]`
+
+display help for nextg
+
+```
+USAGE
+  $ nextg help [COMMAND]
+
+ARGUMENTS
+  COMMAND  command to show help for
+
+OPTIONS
+  --all  see all commands in CLI
+```
+
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.1/src\commands\help.ts)_
+
+## `nextg hoc [NAME]`
+
+adds a new Higher-Order Component
+
+```
+USAGE
+  $ nextg hoc [NAME]
+
+ARGUMENTS
+  NAME  name of the higher-order component
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `nextg hook [NAME]`
+
+adds a new hook
+
+```
+USAGE
+  $ nextg hook [NAME]
+
+ARGUMENTS
+  NAME  name of the hook
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `nextg init [NAME]`
+
+generates a new project
+
+```
+USAGE
+  $ nextg init [NAME]
+
+ARGUMENTS
+  NAME  name of the project
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `nextg model [NAME]`
+
+adds a new model/interface
+
+```
+USAGE
+  $ nextg model [NAME]
+
+ARGUMENTS
+  NAME  name of the interface/model
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `nextg module [NAME]`
+
+generates a new module hahaha
+
+```
+USAGE
+  $ nextg module [NAME]
+
+ARGUMENTS
+  NAME  name of the module
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `nextg module:watch`
+
+watches the modules directory and updates corresponding global pages directory
+
+```
+USAGE
+  $ nextg module:watch
+```
+
+## `nextg page [NAME]`
+
+adds a new page
+
+```
+USAGE
+  $ nextg page [NAME]
+
+ARGUMENTS
+  NAME  name of the page
+
+OPTIONS
+  -c, --conceal      do not show a link to this page
+  -h, --help         show CLI help
+  -i, --icon=icon    icon for this page
+  -t, --title=title  page title
+```
+
+## `nextg provider [NAME]`
+
+adds a new provider
+
+```
+USAGE
+  $ nextg provider [NAME]
+
+ARGUMENTS
+  NAME  name of the provider
+
+OPTIONS
+  -h, --help  show CLI help
+```
+
+## `nextg provider:action [PROVIDER] [NAME]`
+
+adds a new action
+
+```
+USAGE
+  $ nextg provider:action [PROVIDER] [NAME]
+
+ARGUMENTS
+  PROVIDER  name of the provider
+  NAME      name of the action
+
+OPTIONS
+  -a, --actioned      whether the action should have an actioned flag
+  -e, --error         whether the action should have an error flag
+  -h, --help          show CLI help
+  -p, --isInProgress  whether the action should have an in progress flag
+  -s, --success       whether the action should have a success flag
+```
+<!-- commandsstop -->
 * [`nextg component [NAME]`](#nextg-component-name)
 * [`nextg context [NAME]`](#nextg-context-name)
 * [`nextg enum [NAME]`](#nextg-enum-name)

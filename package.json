@@ -83,7 +83,7 @@
     "/oclif.manifest.json",
     "/src/templates"
   ],
-  "homepage": "https://github.com/ElectronHacked/nextg",
+  "homepage": "https://dev.azure.com/boxfusion/nextg",
   "keywords": [
     "oclif"
   ],
@@ -96,7 +96,7 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "ElectronHacked/nextg",
+  "repository": "https://dev.azure.com/boxfusion/_git/nextg",
   "scripts": {
     "postpack": "rimraf oclif.manifest.json",
     "posttest": "tslint -p test -t stylish",
