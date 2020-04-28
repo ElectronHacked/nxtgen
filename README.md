@@ -28,13 +28,13 @@ A CLI tool for generating NextJs applications
 <!-- usage -->
 ```sh-session
 $ npm install -g @shesha/nextg
-$ nextg COMMAND
+$ @shesha/nextg COMMAND
 running command...
-$ nextg (-v|--version|version)
-@shesha/nextg/1.0.1 win32-x64 node-v10.16.3
-$ nextg --help [COMMAND]
+$ @shesha/nextg (-v|--version|version)
+@shesha/nextg/1.0.2 win32-x64 node-v10.16.3
+$ @shesha/nextg --help [COMMAND]
 USAGE
-  $ nextg COMMAND
+  $ @shesha/nextg COMMAND
 ...
 ```
 <!-- usagestop -->
@@ -76,27 +76,27 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`nextg component [NAME]`](#nextg-component-name)
-* [`nextg context [NAME]`](#nextg-context-name)
-* [`nextg enum [NAME]`](#nextg-enum-name)
-* [`nextg help [COMMAND]`](#nextg-help-command)
-* [`nextg hoc [NAME]`](#nextg-hoc-name)
-* [`nextg hook [NAME]`](#nextg-hook-name)
-* [`nextg init [NAME]`](#nextg-init-name)
-* [`nextg model [NAME]`](#nextg-model-name)
-* [`nextg module [NAME]`](#nextg-module-name)
-* [`nextg module:watch`](#nextg-modulewatch)
-* [`nextg page [NAME]`](#nextg-page-name)
-* [`nextg provider [NAME]`](#nextg-provider-name)
-* [`nextg provider:action [PROVIDER] [NAME]`](#nextg-provideraction-provider-name)
+* [`@shesha/nextg component [NAME]`](#sheshanextg-component-name)
+* [`@shesha/nextg context [NAME]`](#sheshanextg-context-name)
+* [`@shesha/nextg enum [NAME]`](#sheshanextg-enum-name)
+* [`@shesha/nextg help [COMMAND]`](#sheshanextg-help-command)
+* [`@shesha/nextg hoc [NAME]`](#sheshanextg-hoc-name)
+* [`@shesha/nextg hook [NAME]`](#sheshanextg-hook-name)
+* [`@shesha/nextg init [NAME]`](#sheshanextg-init-name)
+* [`@shesha/nextg model [NAME]`](#sheshanextg-model-name)
+* [`@shesha/nextg module [NAME]`](#sheshanextg-module-name)
+* [`@shesha/nextg module:watch`](#sheshanextg-modulewatch)
+* [`@shesha/nextg page [NAME]`](#sheshanextg-page-name)
+* [`@shesha/nextg provider [NAME]`](#sheshanextg-provider-name)
+* [`@shesha/nextg provider:action [PROVIDER] [NAME]`](#sheshanextg-provideraction-provider-name)
 
-## `nextg component [NAME]`
+## `@shesha/nextg component [NAME]`
 
 adds a new component
 
 ```
 USAGE
-  $ nextg component [NAME]
+  $ @shesha/nextg component [NAME]
 
 ARGUMENTS
   NAME  name of the component
@@ -105,13 +105,13 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-## `nextg context [NAME]`
+## `@shesha/nextg context [NAME]`
 
 adds a new context
 
 ```
 USAGE
-  $ nextg context [NAME]
+  $ @shesha/nextg context [NAME]
 
 ARGUMENTS
   NAME  name of the context
@@ -120,13 +120,13 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-## `nextg enum [NAME]`
+## `@shesha/nextg enum [NAME]`
 
 adds a new enum
 
 ```
 USAGE
-  $ nextg enum [NAME]
+  $ @shesha/nextg enum [NAME]
 
 ARGUMENTS
   NAME  name of the enum
@@ -135,13 +135,13 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-## `nextg help [COMMAND]`
+## `@shesha/nextg help [COMMAND]`
 
-display help for nextg
+display help for @shesha/nextg
 
 ```
 USAGE
-  $ nextg help [COMMAND]
+  $ @shesha/nextg help [COMMAND]
 
 ARGUMENTS
   COMMAND  command to show help for
@@ -152,13 +152,13 @@ OPTIONS
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.1/src\commands\help.ts)_
 
-## `nextg hoc [NAME]`
+## `@shesha/nextg hoc [NAME]`
 
 adds a new Higher-Order Component
 
 ```
 USAGE
-  $ nextg hoc [NAME]
+  $ @shesha/nextg hoc [NAME]
 
 ARGUMENTS
   NAME  name of the higher-order component
@@ -167,13 +167,13 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-## `nextg hook [NAME]`
+## `@shesha/nextg hook [NAME]`
 
 adds a new hook
 
 ```
 USAGE
-  $ nextg hook [NAME]
+  $ @shesha/nextg hook [NAME]
 
 ARGUMENTS
   NAME  name of the hook
@@ -182,13 +182,13 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-## `nextg init [NAME]`
+## `@shesha/nextg init [NAME]`
 
 generates a new project
 
 ```
 USAGE
-  $ nextg init [NAME]
+  $ @shesha/nextg init [NAME]
 
 ARGUMENTS
   NAME  name of the project
@@ -197,13 +197,13 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-## `nextg model [NAME]`
+## `@shesha/nextg model [NAME]`
 
 adds a new model/interface
 
 ```
 USAGE
-  $ nextg model [NAME]
+  $ @shesha/nextg model [NAME]
 
 ARGUMENTS
   NAME  name of the interface/model
@@ -212,13 +212,13 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-## `nextg module [NAME]`
+## `@shesha/nextg module [NAME]`
 
 generates a new module hahaha
 
 ```
 USAGE
-  $ nextg module [NAME]
+  $ @shesha/nextg module [NAME]
 
 ARGUMENTS
   NAME  name of the module
@@ -227,22 +227,22 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-## `nextg module:watch`
+## `@shesha/nextg module:watch`
 
 watches the modules directory and updates corresponding global pages directory
 
 ```
 USAGE
-  $ nextg module:watch
+  $ @shesha/nextg module:watch
 ```
 
-## `nextg page [NAME]`
+## `@shesha/nextg page [NAME]`
 
 adds a new page
 
 ```
 USAGE
-  $ nextg page [NAME]
+  $ @shesha/nextg page [NAME]
 
 ARGUMENTS
   NAME  name of the page
@@ -254,13 +254,13 @@ OPTIONS
   -t, --title=title  page title
 ```
 
-## `nextg provider [NAME]`
+## `@shesha/nextg provider [NAME]`
 
 adds a new provider
 
 ```
 USAGE
-  $ nextg provider [NAME]
+  $ @shesha/nextg provider [NAME]
 
 ARGUMENTS
   NAME  name of the provider
@@ -269,13 +269,13 @@ OPTIONS
   -h, --help  show CLI help
 ```
 
-## `nextg provider:action [PROVIDER] [NAME]`
+## `@shesha/nextg provider:action [PROVIDER] [NAME]`
 
 adds a new action
 
 ```
 USAGE
-  $ nextg provider:action [PROVIDER] [NAME]
+  $ @shesha/nextg provider:action [PROVIDER] [NAME]
 
 ARGUMENTS
   PROVIDER  name of the provider

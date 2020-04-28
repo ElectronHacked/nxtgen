@@ -1,7 +1,7 @@
 {
   "name": "@shesha/nextg",
   "description": "A CLI tool for generating NextJs applications",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Phil Mashiane @ElectronHacked",
   "bin": {
     "nextg": "./bin/run"
