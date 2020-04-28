@@ -4,7 +4,7 @@
   "version": "1.0.3",
   "author": "Phil Mashiane @ElectronHacked",
   "bin": {
-    "@shesha/nextg": "./bin/run"
+    "nextg": "./bin/run"
   },
   "bugs": "https://github.com/ElectronHacked/nextg/issues",
   "dependencies": {
@@ -92,7 +92,7 @@
   "main": "lib/index.js",
   "oclif": {
     "commands": "./lib/commands",
-    "bin": "@shesha/nextg",
+    "bin": "nextg",
     "plugins": [
       "@oclif/plugin-help"
     ]
@@ -103,10 +103,7 @@
     "posttest": "tslint -p test -t stylish",
     "prepack": "rimraf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif-dev readme && git add README.md",
-    "changelog:major": "changelog -M && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version major && git push origin",
-    "changelog:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version minor && git push origin",
-    "changelog:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version patch && git push origin"
+    "version": "oclif-dev readme && git add README.md"
   },
   "types": "lib/index.d.ts"
 }

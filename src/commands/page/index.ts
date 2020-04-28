@@ -124,7 +124,7 @@ export default class PageCommand extends BaseCommand {
     });
 
     const PAGE_URL_NAME = `${dashifyString(pageName, '_')}_URL`.toUpperCase();
-    
+
     const PAGE_URL_EXPORT_DECLARATION = `export const ${PAGE_URL_NAME} = '${relativePath}';\n`;
 
     const PAGE_ROUTE_OBJECT = `{
