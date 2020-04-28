@@ -4,7 +4,7 @@
   "version": "1.0.2",
   "author": "Phil Mashiane @ElectronHacked",
   "bin": {
-    "nextg": "./bin/run"
+    "@shesha/nextg": "./bin/run"
   },
   "bugs": "https://github.com/ElectronHacked/nextg/issues",
   "dependencies": {
