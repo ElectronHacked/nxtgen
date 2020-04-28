@@ -31,7 +31,7 @@ $ npm install -g @shesha/nextg
 $ nextg COMMAND
 running command...
 $ nextg (-v|--version|version)
-@shesha/nextg/1.0.0 win32-x64 node-v10.16.3
+@shesha/nextg/1.0.1 win32-x64 node-v10.16.3
 $ nextg --help [COMMAND]
 USAGE
   $ nextg COMMAND
