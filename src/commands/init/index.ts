@@ -60,6 +60,20 @@ export default class InitCommand extends BaseCommand {
       projectName,
     });
 
+    //#region Copy all the .files
+    this.fs.copyTpl(this.templatePath('init/_.babelrc'), this.rootDestinationPath('.babelrc'));
+
+    this.fs.copyTpl(this.templatePath('init/_.eslintignore'), this.rootDestinationPath('.eslintignore'));
+
+    this.fs.copyTpl(this.templatePath('init/_.eslintrc'), this.rootDestinationPath('.eslintrc'));
+
+    this.fs.copyTpl(this.templatePath('init/_.gitattributes'), this.rootDestinationPath('.gitattributes'));
+
+    this.fs.copyTpl(this.templatePath('init/_.gitignore'), this.rootDestinationPath('.gitignore'));
+
+    this.fs.copyTpl(this.templatePath('init/_.prettierrc'), this.rootDestinationPath('.prettierrc'));
+    //#endregion
+
     // Now, generate the project
     this.fs.copy(this.templatePath('init/app'), this.rootDestinationPath('./'));
 

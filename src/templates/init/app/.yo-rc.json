@@ -1,8 +1,0 @@
-{
-  "generator-nextjs-typescript-antd": {
-    "pages": [{
-      "name": "index",
-      "path": "index"
-    }]
-  }
-}
