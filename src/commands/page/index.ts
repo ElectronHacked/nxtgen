@@ -1,5 +1,6 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../base';
+import mkdirp = require('mkdirp');
 const humanizeString = require('humanize-string');
 import { listIncludes, pascalCaseName, hiphenizeString, dashifyString } from '../../tools';
 import { IRoute } from '../../models';
@@ -108,6 +109,8 @@ export default class PageCommand extends BaseCommand {
     const className = `${pageName}-page`;
 
     const relativePath = `${pageStorage}/${originalPageName}`.split('pages')[1].replace(/\\/g, '/');
+
+    mkdirp(`${this.sourceDestinationPath('components/pages')}/${relativePath}`);
 
     const componentName = pascalCaseName(originalPageName);
 

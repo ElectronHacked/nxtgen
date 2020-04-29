@@ -17,7 +17,6 @@ export default class ModelCommand extends BaseCommand {
     {
       name: 'name',
       description: 'name of the interface/model',
-      parse: ensureTheNameConforms,
     },
   ];
 
@@ -48,7 +47,7 @@ export default class ModelCommand extends BaseCommand {
 
           return true;
         },
-        when: !args.name || listIncludes(availableModels, args.name),
+        when: !args.name || listIncludes(availableModels, ensureTheNameConforms(args.name)),
         filter: (input: string) =>
           listIncludes(availableModels, ensureTheNameConforms(input)) ? input : ensureTheNameConforms(input),
       },
