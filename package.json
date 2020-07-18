@@ -34,7 +34,7 @@
     "inquirer-prompt-suggest": "^0.1.0",
     "jsonfile": "^5.0.0",
     "listr": "^0.14.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "make-dir": "^3.0.0",
     "mem-fs": "^1.1.3",
     "mem-fs-editor": "^6.0.0",
